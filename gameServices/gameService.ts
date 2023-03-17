@@ -9,6 +9,9 @@ export interface gameData extends room {
   currentRoll: number[];
   dice: number;
   currentScore: number;
+  scorables: string[];
+  canKeep: boolean;
+  canFork: boolean;
 }
 let games: gameData[] = [];
 function gameService() {
@@ -24,6 +27,9 @@ function gameService() {
         currentRoll: [],
         dice: 6,
         currentScore: 0,
+        scorables: [],
+        canKeep: false,
+        canFork: false,
       });
     },
     // nextTurn: (gameId: string) => {

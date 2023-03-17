@@ -6,6 +6,7 @@ import Link from "next/link";
 import Dice from "./dice";
 
 import { gameData } from "@/gameServices/gameService";
+import { player } from "@/gameServices/roomService";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -26,11 +27,10 @@ function toggleClasses(die: HTMLElement) {
 }
 export const RollInterface = (props: {
   game: gameData;
-  player: string;
+  player: player;
   updateReq: (req: any) => void;
   roomId: string;
 }) => {
-  const [dice, setDice] = useState<number>(6);
   const [result, setResult] = useState<number[]>([]);
   const [rollDisabled, setRollDisabled] = useState<boolean>(false);
   const handleScoreSelect = (score: string) => {
@@ -44,9 +44,30 @@ export const RollInterface = (props: {
   useEffect(() => {
     if (props.game.currentRoll.length > 0) pluckDice(props.game.currentRoll);
   }, [props.game.currentRoll]);
-
+  let currentPlayer = props.game.players.find(
+    (p) => p.id === props.game.rollingPlayerId
+  );
+  useEffect(() => {
+    setRollDisabled(false);
+  }, [props.game.rollingPlayerId]);
   return (
     <>
+      <div style={{ position: "absolute", top: 0, left: 0 }}>
+        {props.game.players.map((p) => {
+          return (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "1rem",
+              }}
+            >
+              <span>{p.name}</span>
+              <span>{p.points}</span>
+            </div>
+          );
+        })}
+      </div>
       <div style={{ position: "absolute", top: "20%" }}>
         <div
           style={{
@@ -58,67 +79,76 @@ export const RollInterface = (props: {
             flexDirection: "column",
           }}
         >
-          <span>{props.player}</span>{" "}
+          <span>{currentPlayer && currentPlayer.name}</span>{" "}
           <span>Score: {props.game.currentScore}</span>
         </div>
+        {props.game.rollingPlayerId === props.player.id && (
+          <>
+            <button
+              className={styles.button}
+              disabled={rollDisabled}
+              onClick={() => {
+                props.updateReq({ type: "new-roll" });
+                setRollDisabled(true);
+              }}
+            >
+              {props.game.canFork ? `Fork` : `Roll ${props.game.dice} dice`}
+            </button>
 
-        <button
-          className={styles.button}
-          disabled={rollDisabled}
-          onClick={() => {
-            props.updateReq({ type: "new-roll" });
-            setRollDisabled(true);
-          }}
-        >
-          Roll {props.game.dice} dice
-        </button>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {/* <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-            {result.map((e) => {
-              return (
-                <div className={styles.letter} style={{ fontSize: "5rem" }}>
-                  {e}
-                </div>
-              );
-            })}
-          </div> */}
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {computeResult(result).map((el) => {
-            if (typeof el === "string") {
-              return (
-                <button
-                  className={styles.button}
-                  onClick={() => {
-                    handleScoreSelect(el);
-                  }}
-                >
-                  {el}
-                </button>
-              );
-            }
-          })}
-        </div>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              {props.game.scorables.map((el) => {
+                if (typeof el === "string") {
+                  return (
+                    <button
+                      className={styles.button}
+                      onClick={() => {
+                        handleScoreSelect(el);
+                      }}
+                    >
+                      {el}
+                    </button>
+                  );
+                }
+              })}
+            </div>
+          </>
+        )}
       </div>
-      <button
-        style={{ position: "absolute", top: "0", right: "0" }}
-        className={styles.button}
-        onClick={() => {
-          props.updateReq({ type: "bust" });
-        }}
-      >
-        Bust
-      </button>
-      <button
-        style={{ position: "absolute", bottom: "0", right: "0" }}
-        onClick={() => {
-          props.updateReq({ type: "keep" });
-        }}
-        className={styles.button}
-      >
-        Keep
-      </button>
+      {props.game.rollingPlayerId === props.player.id && (
+        <>
+          {" "}
+          <button
+            style={{ position: "absolute", top: "0", right: "0" }}
+            className={styles.button}
+            onClick={() => {
+              props.updateReq({ type: "bust" });
+            }}
+          >
+            Bust
+          </button>
+          <button
+            style={{ position: "absolute", bottom: "0", right: "0" }}
+            onClick={() => {
+              props.updateReq({ type: "keep" });
+            }}
+            className={styles.button}
+            disabled={!props.game.canKeep}
+          >
+            Keep
+          </button>
+          {props.game.canFork && (
+            <button
+              onClick={() => {
+                props.updateReq({ type: "pass-fork" });
+              }}
+            >
+              Pass
+            </button>
+          )}
+        </>
+      )}
       <Dice results={result} dice={props.game.dice} />
     </>
   );

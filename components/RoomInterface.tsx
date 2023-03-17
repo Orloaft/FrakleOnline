@@ -56,7 +56,7 @@ export const RoomInterface = (props: { user: player }) => {
     (game && (
       <RollInterface
         game={game}
-        player={props.user.name}
+        player={props.user}
         updateReq={updateReq}
         roomId={room.id}
       />

@@ -1,6 +1,6 @@
 import gameService, { playerData } from "@/gameServices/gameService";
 import roomService, { player } from "@/gameServices/roomService";
-import { addToScore, diceRoll } from "@/utils/diceUtils";
+import { addToScore, computeResult, diceRoll } from "@/utils/diceUtils";
 import { Server } from "Socket.IO";
 
 const SocketHandler = (req: any, res: any) => {
@@ -33,28 +33,45 @@ const SocketHandler = (req: any, res: any) => {
         );
         switch (req.type) {
           case "new-roll":
+            res.canFork = false;
             res.currentRoll = diceRoll(res.dice);
+            res.scorables = computeResult(res.currentRoll);
+
+            if (res.scorables.length === 0) {
+              res.canKeep = false;
+            }
             break;
           case "score-select":
             let { newRoll, newScore } = addToScore(req.score, res.currentRoll);
-
+            res.scorables = computeResult(newRoll);
             res.currentRoll = newRoll;
             res.currentScore += newScore;
             res.dice = res.currentRoll.length;
             if (res.dice === 0) {
               res.dice = 6;
             }
+            res.canKeep = true;
             break;
           case "keep":
-            player.points += res.currentScore;
-            res.currentScore = 0;
+            if (player.points > 0 || res.currentScore >= 500) {
+              player.points += res.currentScore;
+            }
+
             if (res.players.indexOf(player) < res.players.length - 1) {
               res.rollingPlayerId =
                 res.players[res.players.indexOf(player) + 1].id;
             } else {
               res.rollingPlayerId = res.players[0].id;
             }
+            res.canFork = true;
+            res.currentRoll = [];
+            res.canKeep = false;
+            res.scorables = [];
+            break;
+          case "pass-fork":
+            res.canFork = false;
             res.dice = 6;
+            res.currentScore = 0;
             break;
           case "bust":
             player = res.players.find(
@@ -62,12 +79,14 @@ const SocketHandler = (req: any, res: any) => {
             );
             res.currentScore = 0;
             res.dice = 6;
+            res.currentRoll = [];
             if (res.players.indexOf(player) < res.players.length - 1) {
               res.rollingPlayerId =
                 res.players[res.players.indexOf(player) + 1].id;
             } else {
               res.rollingPlayerId = res.players[0].id;
             }
+            res.scorables = [];
             break;
         }
 

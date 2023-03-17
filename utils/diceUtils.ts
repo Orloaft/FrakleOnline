@@ -117,8 +117,9 @@ export const computeResult = (result: number[]) => {
     result[i] === 1 && scorables.push(`1 = 100`);
     result[i] === 5 && scorables.push(`5 = 50`);
   }
-
-  return scorables.filter((e) => e !== false);
+  scorables = scorables.filter((e) => e !== false);
+  scorables = scorables.filter((e) => e !== undefined);
+  return scorables;
 };
 export const addToScore = (score: string, result: number[]) => {
   let newResult = [...result];
