@@ -1,9 +1,5 @@
 import styles from "@/styles/Home.module.css";
 import Link from "next/link";
-import { useEffect } from "react";
-import io, { Socket } from "Socket.IO-client";
-import axios from "axios";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 export default function Home() {
   return (
