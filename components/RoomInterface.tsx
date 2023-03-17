@@ -88,6 +88,7 @@ export const RoomInterface = (props: { user: player }) => {
           {rooms.map((room) => {
             return (
               <li
+                key={room.id}
                 onClick={() => {
                   socket.emit("join-room", room.id, props.user);
                 }}

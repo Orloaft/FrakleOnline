@@ -7,6 +7,7 @@ import Dice from "./dice";
 
 import { gameData } from "@/gameServices/gameService";
 import { player } from "@/gameServices/roomService";
+import { uuid } from "uuidv4";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -56,6 +57,7 @@ export const RollInterface = (props: {
         {props.game.players.map((p) => {
           return (
             <div
+              key={p.id}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -102,6 +104,7 @@ export const RollInterface = (props: {
                 if (typeof el === "string") {
                   return (
                     <button
+                      key={uuid()}
                       className={styles.button}
                       onClick={() => {
                         handleScoreSelect(el);

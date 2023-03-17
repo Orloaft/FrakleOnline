@@ -7,7 +7,7 @@ export const Room = (props: { room: room | boolean }) => {
         <span>{props.room.id}</span>
         <ul>
           {props.room.players.map((p) => {
-            return <li>{p.name}</li>;
+            return <li key={p.id}>{p.name}</li>;
           })}
         </ul>
       </div>
