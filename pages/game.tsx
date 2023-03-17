@@ -1,26 +1,27 @@
 import { RollInterface } from "@/components/RollInterface";
 import { RoomInterface } from "@/components/RoomInterface";
+import { player } from "@/gameServices/roomService";
 import styles from "@/styles/Home.module.css";
 import { FormEvent, useState } from "react";
 import { uuid } from "uuidv4";
 
 export default function Game() {
-  const [player, setPlayer] = useState("");
+  const [playerData, setPlayerData] = useState<player | null>(null);
   const handleSubmit = (e: FormEvent<HTMLFormElement> | any) => {
     e.preventDefault();
     localStorage.setItem(
       "user",
       JSON.stringify({ id: uuid(), name: e.target.playername.value })
     );
-    setPlayer(e.target.playername.value);
+    setPlayerData({ id: uuid(), name: e.target.playername.value });
     e.target.playername.value = "";
   };
   return (
     <>
       <div className={styles.home}>
-        {(player && (
+        {(playerData && (
           <>
-            <RoomInterface />
+            <RoomInterface user={playerData} />
           </>
         )) || (
           <form

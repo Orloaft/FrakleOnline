@@ -1,6 +1,6 @@
 import scoreUtils from "./scoreUtils";
 export const diceRoll = (n: number) => {
-  let result = [];
+  let result: number[] = [];
   for (let i = 0; i < n; i++) {
     result.push(Math.floor(Math.random() * 6 + 1));
   }
@@ -126,64 +126,64 @@ export const addToScore = (score: string, result: number[]) => {
     case `three pairs = 1500`:
       newResult = [];
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `2 triplets = 2500`:
       newResult = [];
       scoreUtils.addScore(2500);
-      return newResult;
+      return { newRoll: newResult, newScore: 2500 };
     case `four & pair = 1500`:
       newResult = [];
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `1-6 straight = 1500`:
       newResult = [];
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `1 = 100`:
       newResult = [...result];
       newResult.splice(result.indexOf(1), 1);
       scoreUtils.addScore(100);
-      return newResult;
+      return { newRoll: newResult, newScore: 100 };
     case `5 = 50`:
       newResult = [...result];
       newResult.splice(result.indexOf(5), 1);
       scoreUtils.addScore(50);
-      return newResult;
+      return { newRoll: newResult, newScore: 50 };
     case `3 * 2 = 200`:
       newResult = [...result];
       newResult.splice(result.indexOf(2), 1);
       newResult.splice(result.indexOf(2), 1);
       newResult.splice(result.indexOf(2), 1);
       scoreUtils.addScore(200);
-      return newResult;
+      return { newRoll: newResult, newScore: 200 };
     case `3 * 3 = 300`:
       newResult = [...result];
       newResult.splice(result.indexOf(3), 1);
       newResult.splice(result.indexOf(3), 1);
       newResult.splice(result.indexOf(3), 1);
       scoreUtils.addScore(300);
-      return newResult;
+      return { newRoll: newResult, newScore: 300 };
     case `3 * 4 = 400`:
       newResult = [...result];
       newResult.splice(result.indexOf(4), 1);
       newResult.splice(result.indexOf(4), 1);
       newResult.splice(result.indexOf(4), 1);
       scoreUtils.addScore(400);
-      return newResult;
+      return { newRoll: newResult, newScore: 400 };
     case `3 * 5 = 500`:
       newResult = [...result];
       newResult.splice(result.indexOf(5), 1);
       newResult.splice(result.indexOf(5), 1);
       newResult.splice(result.indexOf(5), 1);
       scoreUtils.addScore(500);
-      return newResult;
+      return { newRoll: newResult, newScore: 500 };
     case `3 * 6 = 600`:
       newResult = [...result];
       newResult.splice(result.indexOf(6), 1);
       newResult.splice(result.indexOf(6), 1);
       newResult.splice(result.indexOf(6), 1);
       scoreUtils.addScore(600);
-      return newResult;
+      return { newRoll: newResult, newScore: 600 };
     case `4 * 1 = 1000`:
       newResult = [...result];
       newResult.splice(result.indexOf(1), 1);
@@ -191,7 +191,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(1), 1);
       newResult.splice(result.indexOf(1), 1);
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `4 * 2 = 1000`:
       newResult = [...result];
       newResult.splice(result.indexOf(2), 1);
@@ -199,7 +199,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(2), 1);
       newResult.splice(result.indexOf(2), 1);
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `4 * 3 = 1000`:
       newResult = [...result];
       newResult.splice(result.indexOf(3), 1);
@@ -207,7 +207,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(3), 1);
       newResult.splice(result.indexOf(3), 1);
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `4 * 4 = 1000`:
       newResult = [...result];
       newResult.splice(result.indexOf(4), 1);
@@ -215,7 +215,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(4), 1);
       newResult.splice(result.indexOf(4), 1);
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `4 * 5 = 1000`:
       newResult = [...result];
       newResult.splice(result.indexOf(5), 1);
@@ -223,7 +223,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(5), 1);
       newResult.splice(result.indexOf(5), 1);
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `4 * 6 = 1000`:
       newResult = [...result];
       newResult.splice(result.indexOf(6), 1);
@@ -231,7 +231,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(6), 1);
       newResult.splice(result.indexOf(6), 1);
       scoreUtils.addScore(1500);
-      return newResult;
+      return { newRoll: newResult, newScore: 1500 };
     case `5 * 1 = 2000`:
       newResult = [...result];
       newResult.splice(result.indexOf(1), 1);
@@ -240,7 +240,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(1), 1);
       newResult.splice(result.indexOf(1), 1);
       scoreUtils.addScore(2000);
-      return newResult;
+      return { newRoll: newResult, newScore: 2000 };
     case `5 * 2 = 2000`:
       newResult = [...result];
       newResult.splice(result.indexOf(2), 1);
@@ -249,7 +249,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(2), 1);
       newResult.splice(result.indexOf(2), 1);
       scoreUtils.addScore(2000);
-      return newResult;
+      return { newRoll: newResult, newScore: 2000 };
     case `5 * 3 = 2000`:
       newResult = [...result];
       newResult.splice(result.indexOf(3), 1);
@@ -258,7 +258,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(3), 1);
       newResult.splice(result.indexOf(3), 1);
       scoreUtils.addScore(2000);
-      return newResult;
+      return { newRoll: newResult, newScore: 2000 };
     case `5 * 4 = 2000`:
       newResult = [...result];
       newResult.splice(result.indexOf(4), 1);
@@ -267,7 +267,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(4), 1);
       newResult.splice(result.indexOf(4), 1);
       scoreUtils.addScore(2000);
-      return newResult;
+      return { newRoll: newResult, newScore: 2000 };
     case `5 * 5 = 2000`:
       newResult = [...result];
       newResult.splice(result.indexOf(5), 1);
@@ -276,7 +276,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(5), 1);
       newResult.splice(result.indexOf(5), 1);
       scoreUtils.addScore(2000);
-      return newResult;
+      return { newRoll: newResult, newScore: 2000 };
     case `5 * 6 = 2000`:
       newResult = [...result];
       newResult.splice(result.indexOf(6), 1);
@@ -285,7 +285,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(6), 1);
       newResult.splice(result.indexOf(6), 1);
       scoreUtils.addScore(2000);
-      return newResult;
+      return { newRoll: newResult, newScore: 2000 };
     case `6 * 1 = 3000`:
       newResult = [...result];
       newResult.splice(result.indexOf(1), 1);
@@ -295,7 +295,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(1), 1);
       newResult.splice(result.indexOf(1), 1);
       scoreUtils.addScore(3000);
-      return newResult;
+      return { newRoll: newResult, newScore: 3000 };
     case `6 * 2 = 3000`:
       newResult = [...result];
       newResult.splice(result.indexOf(2), 1);
@@ -305,7 +305,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(2), 1);
       newResult.splice(result.indexOf(2), 1);
       scoreUtils.addScore(3000);
-      return newResult;
+      return { newRoll: newResult, newScore: 3000 };
     case `6 * 3 = 3000`:
       newResult = [...result];
       newResult.splice(result.indexOf(3), 1);
@@ -315,7 +315,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(3), 1);
       newResult.splice(result.indexOf(3), 1);
       scoreUtils.addScore(3000);
-      return newResult;
+      return { newRoll: newResult, newScore: 3000 };
     case `6 * 4 = 3000`:
       newResult = [...result];
       newResult.splice(result.indexOf(4), 1);
@@ -325,7 +325,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(4), 1);
       newResult.splice(result.indexOf(4), 1);
       scoreUtils.addScore(3000);
-      return newResult;
+      return { newRoll: newResult, newScore: 3000 };
     case `6 * 5 = 3000`:
       newResult = [...result];
       newResult.splice(result.indexOf(5), 1);
@@ -335,7 +335,7 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(5), 1);
       newResult.splice(result.indexOf(5), 1);
       scoreUtils.addScore(3000);
-      return newResult;
+      return { newRoll: newResult, newScore: 3000 };
     case `6 * 6 = 3000`:
       newResult = [...result];
       newResult.splice(result.indexOf(6), 1);
@@ -345,8 +345,8 @@ export const addToScore = (score: string, result: number[]) => {
       newResult.splice(result.indexOf(6), 1);
       newResult.splice(result.indexOf(6), 1);
       scoreUtils.addScore(3000);
-      return newResult;
+      return { newRoll: newResult, newScore: 3000 };
   }
 
-  return result;
+  return { newRoll: result, newScore: 0 };
 };

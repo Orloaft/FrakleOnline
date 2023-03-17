@@ -3,19 +3,47 @@ import scoreUtils from "@/utils/scoreUtils";
 import { useEffect, useState } from "react";
 import styles from "@/styles/Home.module.css";
 import Link from "next/link";
+import Dice from "./dice";
 
-export const RollInterface = (props: { player: string }) => {
+import { gameData } from "@/gameServices/gameService";
+
+function rollDice(rolls: number[]) {
+  const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
+  for (let i = 0; i < dice.length; i++) {
+    toggleClasses(dice[i]);
+    rolls[i] && (dice[i].dataset.roll = rolls[i].toString());
+  }
+}
+function pluckDice(rolls: number[]) {
+  const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
+  for (let i = 0; i < dice.length; i++) {
+    rolls[i] && (dice[i].dataset.roll = rolls[i].toString());
+  }
+}
+function toggleClasses(die: HTMLElement) {
+  die.classList.toggle("odd-roll");
+  die.classList.toggle("even-roll");
+}
+export const RollInterface = (props: {
+  game: gameData;
+  player: string;
+  updateReq: (req: any) => void;
+  roomId: string;
+}) => {
   const [dice, setDice] = useState<number>(6);
   const [result, setResult] = useState<number[]>([]);
   const [rollDisabled, setRollDisabled] = useState<boolean>(false);
   const handleScoreSelect = (score: string) => {
-    setResult(addToScore(score, result));
+    props.updateReq({ type: "score-select", score: score });
     setRollDisabled(false);
   };
   useEffect(() => {
-    result.length && setDice(result.length);
-    !result.length && setDice(6);
-  }, [result]);
+    rollDice(props.game.currentRoll);
+    setResult(props.game.currentRoll);
+  }, [props.game]);
+  useEffect(() => {
+    if (props.game.currentRoll.length > 0) pluckDice(props.game.currentRoll);
+  }, [props.game.currentRoll]);
 
   return (
     <>
@@ -31,21 +59,21 @@ export const RollInterface = (props: { player: string }) => {
           }}
         >
           <span>{props.player}</span>{" "}
-          <span>Score: {scoreUtils.addScore(0)}</span>
+          <span>Score: {props.game.currentScore}</span>
         </div>
 
         <button
           className={styles.button}
           disabled={rollDisabled}
           onClick={() => {
-            setResult(diceRoll(dice));
+            props.updateReq({ type: "new-roll" });
             setRollDisabled(true);
           }}
         >
-          Roll {dice} dice
+          Roll {props.game.dice} dice
         </button>
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+          {/* <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
             {result.map((e) => {
               return (
                 <div className={styles.letter} style={{ fontSize: "5rem" }}>
@@ -53,7 +81,7 @@ export const RollInterface = (props: { player: string }) => {
                 </div>
               );
             })}
-          </div>
+          </div> */}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -77,21 +105,21 @@ export const RollInterface = (props: { player: string }) => {
         style={{ position: "absolute", top: "0", right: "0" }}
         className={styles.button}
         onClick={() => {
-          scoreUtils.setScore(0);
-          setDice(6);
-          setRollDisabled(false);
-          setResult([]);
+          props.updateReq({ type: "bust" });
         }}
       >
         Bust
       </button>
-      <Link
+      <button
         style={{ position: "absolute", bottom: "0", right: "0" }}
-        href="/"
+        onClick={() => {
+          props.updateReq({ type: "keep" });
+        }}
         className={styles.button}
       >
-        Back
-      </Link>
+        Keep
+      </button>
+      <Dice results={result} dice={props.game.dice} />
     </>
   );
 };
