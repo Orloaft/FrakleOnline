@@ -1,6 +1,9 @@
 export default function Dice(props: { results: number[]; dice: number }) {
   return (
-    <div style={{ width: "100%", transform: "scale(.5)" }}>
+    <div
+      className="dice_tray"
+      style={{ width: "100%", transform: "scale(.5)" }}
+    >
       <div className="dice">
         {props.dice >= 1 && (
           <ol className="die-list even-roll" data-roll="1" id="die-1">

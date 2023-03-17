@@ -51,22 +51,38 @@ const SocketHandler = (req: any, res: any) => {
               res.dice = 6;
             }
             res.canKeep = true;
+            if (player.points === 10000) {
+              res.scorables.length && (res.canKeep = false);
+            }
             break;
           case "keep":
             if (player.points > 0 || res.currentScore >= 500) {
               player.points += res.currentScore;
             }
-
+            if (player.points === 10000) {
+              res.concluded = true;
+            }
             if (res.players.indexOf(player) < res.players.length - 1) {
               res.rollingPlayerId =
                 res.players[res.players.indexOf(player) + 1].id;
             } else {
               res.rollingPlayerId = res.players[0].id;
             }
-            res.canFork = true;
+            if (
+              res.players.find(
+                (pl: playerData) => pl.id === res.rollingPlayerId
+              ).points > 0
+            ) {
+              res.canFork = true;
+            } else {
+              res.dice = 6;
+              res.currentScore = 0;
+            }
+
             res.currentRoll = [];
             res.canKeep = false;
             res.scorables = [];
+
             break;
           case "pass-fork":
             res.canFork = false;

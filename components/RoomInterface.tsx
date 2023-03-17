@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import axios from "axios";
 import { Room } from "./Room";
-import { gameData } from "@/gameServices/gameService";
+import { gameData, playerData } from "@/gameServices/gameService";
 import { RollInterface } from "./RollInterface";
 
 import { io, Socket } from "socket.io-client";
+import { GameOver } from "./GameOver";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 export const RoomInterface = (props: { user: player }) => {
@@ -61,10 +62,16 @@ export const RoomInterface = (props: { user: player }) => {
         roomId={room.id}
       />
     )) ||
+    (game && game.players.find((p: playerData) => p.points === 10000) && (
+      <GameOver
+        winner={game.players.find((p: playerData) => p.points === 10000)}
+      />
+    )) ||
     (room && room.players.find((p: player) => p.id === props.user.id) && (
       <>
         <Room room={room} />
         <button
+          className="button"
           onClick={() => {
             socket.emit("leave-room", room.id, props.user);
           }}
@@ -73,6 +80,7 @@ export const RoomInterface = (props: { user: player }) => {
         </button>
         {room.host.id === props.user.id && (
           <button
+            className="button"
             onClick={() => {
               socket.emit("start-game", room);
             }}
@@ -83,12 +91,12 @@ export const RoomInterface = (props: { user: player }) => {
       </>
     )) || (
       <section>
-        <h1>Rooms:</h1>
         <ul>
           {rooms.map((room) => {
             return (
               <li
                 key={room.id}
+                className="li"
                 onClick={() => {
                   socket.emit("join-room", room.id, props.user);
                 }}
@@ -98,7 +106,9 @@ export const RoomInterface = (props: { user: player }) => {
             );
           })}
         </ul>
-        <button onClick={() => socket.emit("get-rooms")}>refresh</button>
+        <button className="button" onClick={() => socket.emit("get-rooms")}>
+          refresh
+        </button>
         <form
           onSubmit={(e: any) => {
             e.preventDefault();
@@ -107,8 +117,13 @@ export const RoomInterface = (props: { user: player }) => {
             e.target.room_name.value = "";
           }}
         >
-          <input type="text" name="room_name"></input>
-          <button>make room</button>
+          <input
+            className="input"
+            type="text"
+            name="room_name"
+            autoComplete="off"
+          ></input>
+          <button className="button">make room</button>
         </form>
       </section>
     )

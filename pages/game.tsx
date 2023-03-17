@@ -9,12 +9,14 @@ export default function Game() {
   const [playerData, setPlayerData] = useState<player | null>(null);
   const handleSubmit = (e: FormEvent<HTMLFormElement> | any) => {
     e.preventDefault();
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ id: uuid(), name: e.target.playername.value })
-    );
-    setPlayerData({ id: uuid(), name: e.target.playername.value });
-    e.target.playername.value = "";
+    if (e.target.playername.value) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ id: uuid(), name: e.target.playername.value })
+      );
+      setPlayerData({ id: uuid(), name: e.target.playername.value });
+      e.target.playername.value = "";
+    }
   };
   return (
     <>
@@ -31,9 +33,13 @@ export default function Game() {
             }}
             style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
           >
-            <span> player name:</span>
-            <input placeholder="name" name="playername"></input>
-            <button className={styles.button}>Submit</button>
+            <input
+              autoComplete="off"
+              className="input"
+              placeholder="player name"
+              name="playername"
+            ></input>
+            <button className="button">Submit</button>
           </form>
         )}
       </div>

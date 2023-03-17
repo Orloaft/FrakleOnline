@@ -174,3 +174,119 @@ div {
 [data-side="6"] .dot:nth-of-type(6) {
   grid-area: nine;
 }
+.input {
+  background-color: #1d1e29;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.2em;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.input:focus {
+  background-color: #0d0e16;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.input::placeholder {
+  color: #fff;
+  opacity: 0.7;
+}
+
+.input:hover,
+.input:active {
+  transform: translateY(-5px);
+}
+.button {
+  background-color: #1d1e29;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.2em;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.button:hover {
+  background-color: #3ef5f899;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-5px);
+}
+.button:disabled {
+  background-color: rgb(168, 172, 172);
+  border-color: rgb(7, 7, 7);
+  cursor:default;
+}
+.li {
+  color: #fff;
+  font-size: 1.2em;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  list-style: none;
+  border-radius: 30px;
+}
+
+.li:hover {
+  background-color: #3ef5f899;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.li::before {
+  content: ">";
+  margin-right: 10px;
+}
+
+.li:first-child::before {
+  content: "";
+}
+
+.li.active,
+.li.current-page {
+  background-color:  #3ef5f899;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+.room_player {
+  color: #fff;
+  font-size: 1.2em;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  list-style: none;
+  border-radius: 30px;
+}
+.dice_tray{
+  position: absolute;
+  top:10%;
+}
+
+span {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 0 0 10px  #3ef5f899;
+  animation: neon 1s ease-in-out infinite alternate;
+}
+
+@keyframes neon {
+  from {
+    text-shadow: 0 0 10px  #3ef5f899, 0 0 20px  #3ef5f899, 0 0 30px  #3ef5f899, 0 0 40px  #3ef5f899;
+  }
+  to {
+    text-shadow: 0 0 5px  #3ef5f899, 0 0 10px  #3ef5f899, 0 0 15px  #3ef5f899, 0 0 20px  #3ef5f899;
+  }
+}

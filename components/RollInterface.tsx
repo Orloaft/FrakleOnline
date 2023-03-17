@@ -53,7 +53,8 @@ export const RollInterface = (props: {
   }, [props.game.rollingPlayerId]);
   return (
     <>
-      <div style={{ position: "absolute", top: 0, left: 0 }}>
+      <Dice results={result} dice={props.game.dice} />
+      <div style={{ position: "absolute", top: " 2%", left: "2%" }}>
         {props.game.players.map((p) => {
           return (
             <div
@@ -62,6 +63,7 @@ export const RollInterface = (props: {
                 display: "flex",
                 justifyContent: "space-between",
                 gap: "1rem",
+                fontSize: "2rem",
               }}
             >
               <span>{p.name}</span>
@@ -70,7 +72,7 @@ export const RollInterface = (props: {
           );
         })}
       </div>
-      <div style={{ position: "absolute", top: "20%" }}>
+      <div style={{ position: "absolute", top: "50%" }}>
         <div
           style={{
             position: "absolute",
@@ -87,8 +89,9 @@ export const RollInterface = (props: {
         {props.game.rollingPlayerId === props.player.id && (
           <>
             <button
-              className={styles.button}
+              className="button"
               disabled={rollDisabled}
+              style={{ zIndex: "7", margin: "2rem" }}
               onClick={() => {
                 props.updateReq({ type: "new-roll" });
                 setRollDisabled(true);
@@ -96,6 +99,36 @@ export const RollInterface = (props: {
             >
               {props.game.canFork ? `Fork` : `Roll ${props.game.dice} dice`}
             </button>
+            {(props.game.canFork && (
+              <button
+                className="button"
+                onClick={() => {
+                  props.updateReq({ type: "pass-fork" });
+                }}
+              >
+                Pass
+              </button>
+            )) || (
+              <button
+                onClick={() => {
+                  props.updateReq({ type: "keep" });
+                }}
+                className="button"
+                disabled={!props.game.canKeep}
+              >
+                Keep
+              </button>
+            )}
+            {props.game.rollingPlayerId === props.player.id && (
+              <button
+                className="button"
+                onClick={() => {
+                  props.updateReq({ type: "bust" });
+                }}
+              >
+                Bust
+              </button>
+            )}
 
             <div
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -105,7 +138,7 @@ export const RollInterface = (props: {
                   return (
                     <button
                       key={uuid()}
-                      className={styles.button}
+                      className="button"
                       onClick={() => {
                         handleScoreSelect(el);
                       }}
@@ -119,40 +152,6 @@ export const RollInterface = (props: {
           </>
         )}
       </div>
-      {props.game.rollingPlayerId === props.player.id && (
-        <>
-          {" "}
-          <button
-            style={{ position: "absolute", top: "0", right: "0" }}
-            className={styles.button}
-            onClick={() => {
-              props.updateReq({ type: "bust" });
-            }}
-          >
-            Bust
-          </button>
-          <button
-            style={{ position: "absolute", bottom: "0", right: "0" }}
-            onClick={() => {
-              props.updateReq({ type: "keep" });
-            }}
-            className={styles.button}
-            disabled={!props.game.canKeep}
-          >
-            Keep
-          </button>
-          {props.game.canFork && (
-            <button
-              onClick={() => {
-                props.updateReq({ type: "pass-fork" });
-              }}
-            >
-              Pass
-            </button>
-          )}
-        </>
-      )}
-      <Dice results={result} dice={props.game.dice} />
     </>
   );
 };

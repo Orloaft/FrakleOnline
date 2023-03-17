@@ -8,7 +8,7 @@
   height: 100vh;
   padding: 2rem;
 }
-.button {
+/* .button {
   margin: 1rem;
   background-color: #f0f;
   border: 3px solid #0ff;
@@ -23,12 +23,8 @@
   background-color: #0ff;
   border-color: #f0f;
   cursor: pointer;
-}
-.button:disabled {
-  background-color: rgb(168, 172, 172);
-  border-color: rgb(7, 7, 7);
-  cursor:default;
-}
+} */
+
 .home {
   height: 100vh;
   width: 100vw;

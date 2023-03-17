@@ -12,6 +12,7 @@ export interface gameData extends room {
   scorables: string[];
   canKeep: boolean;
   canFork: boolean;
+  concluded: boolean;
 }
 let games: gameData[] = [];
 function gameService() {
@@ -30,6 +31,7 @@ function gameService() {
         scorables: [],
         canKeep: false,
         canFork: false,
+        concluded: false,
       });
     },
     // nextTurn: (gameId: string) => {
