@@ -1,7 +1,7 @@
 import gameService, { playerData } from "@/gameServices/gameService";
 import roomService, { player } from "@/gameServices/roomService";
 import { addToScore, computeResult, diceRoll } from "@/utils/diceUtils";
-import { Server } from "Socket.IO";
+import { Server } from "socket.io";
 
 const SocketHandler = (req: any, res: any) => {
   if (res.socket.server.io) {
