@@ -53,6 +53,13 @@ export const RoomInterface = (props: { user: player }) => {
       room.id
     );
   };
+  if (game && game.concluded) {
+    return (
+      <GameOver
+        winner={game.players.find((p: playerData) => p.points === 10000)}
+      />
+    );
+  }
   return (
     (game && (
       <RollInterface
@@ -60,11 +67,6 @@ export const RoomInterface = (props: { user: player }) => {
         player={props.user}
         updateReq={updateReq}
         roomId={room.id}
-      />
-    )) ||
-    (game && game.players.find((p: playerData) => p.points === 10000) && (
-      <GameOver
-        winner={game.players.find((p: playerData) => p.points === 10000)}
       />
     )) ||
     (room && room.players.find((p: player) => p.id === props.user.id) && (

@@ -51,13 +51,16 @@ const SocketHandler = (req: any, res: any) => {
               res.dice = 6;
             }
             res.canKeep = true;
-            if (player.points === 10000) {
+            if (player.points + res.currentScore === 10000) {
               res.scorables.length && (res.canKeep = false);
             }
+            player.points + res.currentScore > 10000 && (res.canKeep = false);
             break;
           case "keep":
             if (player.points > 0 || res.currentScore >= 500) {
-              player.points += res.currentScore;
+              if (player.points + res.currentScore <= 10000) {
+                player.points += res.currentScore;
+              }
             }
             if (player.points === 10000) {
               res.concluded = true;
@@ -90,9 +93,6 @@ const SocketHandler = (req: any, res: any) => {
             res.currentScore = 0;
             break;
           case "bust":
-            player = res.players.find(
-              (p: playerData) => p.id === res.rollingPlayerId
-            );
             res.currentScore = 0;
             res.dice = 6;
             res.currentRoll = [];
