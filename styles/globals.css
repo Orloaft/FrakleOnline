@@ -291,6 +291,8 @@ span {
   }
 }
 .title {
+  display:flex;
+
   font-family: 'Orbitron', sans-serif;
   font-size: 4rem;
   text-transform: uppercase;
@@ -300,9 +302,14 @@ span {
   margin: 0;
   padding: 0;
   animation: change-colors 5s ease-in-out infinite;
+  
 }
 
-
+@media only screen and (max-width: 600px) {
+  .title {
+    flex-direction: column;
+  }
+}
 @keyframes change-colors {
   0% {
     color: #ffffff;
