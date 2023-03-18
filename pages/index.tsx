@@ -4,14 +4,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className={styles.home}>
-      <h1>
-        <div className={styles.lofi}>
-          <div className={styles.letter}>D</div>
-          <div className={styles.letter}>I</div>
-          <div className={styles.letter}>C</div>
-          <div className={styles.letter}>E</div>
-        </div>
-      </h1>
+      <h1 className="title">Space Dice</h1>
 
       <Link href="/game">
         <div className={styles.play}>

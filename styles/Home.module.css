@@ -52,22 +52,7 @@
     transform: rotate(-10deg) skew(-20deg);
     margin-bottom: -36px;
 }
-.play {
-  padding-bottom: 250px;
-  font-size: 4em;
-  text-transform: uppercase;
-  font-weight: bold;
-   font-family: "Open Sans";
-  font-family: Arial;
-  color: transparent;
-  position: relative;
-  display: block;
-  letter-spacing: 5px;
-  -webkit-transform: rotate(-10deg) skew(-20deg);
-  -ms-transform: rotate(-10deg) skew(-20deg);
-  transform: rotate(-10deg) skew(-20deg);
-  margin-bottom: -36px;
-}
+
 .letter {
   -webkit-text-stroke: 7px #00ffee;
     margin-top: -8px;
