@@ -28,81 +28,23 @@ const SocketHandler = (req: any, res: any) => {
       });
       socket.on("game-update", (req, id) => {
         let res = { ...req.game };
-        let player = res.players.find(
-          (p: playerData) => p.id === res.rollingPlayerId
-        );
+
         switch (req.type) {
           case "new-roll":
-            res.canFork = false;
-            res.currentRoll = diceRoll(res.dice);
-            res.scorables = computeResult(res.currentRoll);
-
-            if (res.scorables.length === 0) {
-              res.canKeep = false;
-            }
+            res = gameService.newRoll(res.id);
             break;
           case "score-select":
-            let { newRoll, newScore } = addToScore(req.score, res.currentRoll);
-            res.scorables = computeResult(newRoll);
-            res.currentRoll = newRoll;
-            res.currentScore += newScore;
-            res.dice = res.currentRoll.length;
-            if (res.dice === 0) {
-              res.dice = 6;
-            }
-            res.canKeep = true;
-            if (player.points + res.currentScore === 10000) {
-              res.scorables.length && (res.canKeep = false);
-            }
-            player.points + res.currentScore > 10000 && (res.canKeep = false);
+            res = gameService.scoreSelect(res.id, req.score);
             break;
           case "keep":
-            if (player.points > 0 || res.currentScore >= 500) {
-              if (player.points + res.currentScore <= 10000) {
-                player.points += res.currentScore;
-              }
-            }
-            if (player.points === 10000) {
-              res.concluded = true;
-            }
-            if (res.players.indexOf(player) < res.players.length - 1) {
-              res.rollingPlayerId =
-                res.players[res.players.indexOf(player) + 1].id;
-            } else {
-              res.rollingPlayerId = res.players[0].id;
-            }
-            if (
-              res.players.find(
-                (pl: playerData) => pl.id === res.rollingPlayerId
-              ).points > 0
-            ) {
-              res.canFork = true;
-            } else {
-              res.dice = 6;
-              res.currentScore = 0;
-            }
-
-            res.currentRoll = [];
-            res.canKeep = false;
-            res.scorables = [];
+            res = gameService.keep(res.id);
 
             break;
           case "pass-fork":
-            res.canFork = false;
-            res.dice = 6;
-            res.currentScore = 0;
+            res = gameService.passFork(res.id);
             break;
           case "bust":
-            res.currentScore = 0;
-            res.dice = 6;
-            res.currentRoll = [];
-            if (res.players.indexOf(player) < res.players.length - 1) {
-              res.rollingPlayerId =
-                res.players[res.players.indexOf(player) + 1].id;
-            } else {
-              res.rollingPlayerId = res.players[0].id;
-            }
-            res.scorables = [];
+            res = gameService.bust(res.id);
             break;
         }
 
