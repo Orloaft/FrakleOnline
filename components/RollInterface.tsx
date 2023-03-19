@@ -1,8 +1,5 @@
-import { addToScore, computeResult, diceRoll } from "@/utils/diceUtils";
-import scoreUtils from "@/utils/scoreUtils";
 import { useEffect, useState } from "react";
-import styles from "@/styles/Home.module.css";
-import Link from "next/link";
+
 import Dice from "./dice";
 
 import { gameData } from "@/gameServices/gameService";
@@ -33,10 +30,9 @@ export const RollInterface = (props: {
   roomId: string;
 }) => {
   const [result, setResult] = useState<number[]>([]);
-  const [rollDisabled, setRollDisabled] = useState<boolean>(false);
+
   const handleScoreSelect = (score: string) => {
     props.updateReq({ type: "score-select", score: score });
-    setRollDisabled(false);
   };
   useEffect(() => {
     rollDice(props.game.currentRoll);
@@ -48,9 +44,7 @@ export const RollInterface = (props: {
   let currentPlayer = props.game.players.find(
     (p) => p.id === props.game.rollingPlayerId
   );
-  useEffect(() => {
-    setRollDisabled(false);
-  }, [props.game.rollingPlayerId]);
+
   return (
     <>
       <Dice results={result} dice={props.game.dice} />
@@ -90,11 +84,10 @@ export const RollInterface = (props: {
           <>
             <button
               className="button"
-              disabled={rollDisabled}
+              disabled={!props.game.canRoll}
               style={{ zIndex: "7", margin: "2rem" }}
               onClick={() => {
                 props.updateReq({ type: "new-roll" });
-                setRollDisabled(true);
               }}
             >
               {props.game.canFork ? `Fork` : `Roll ${props.game.dice} dice`}

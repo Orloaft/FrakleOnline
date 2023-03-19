@@ -1,6 +1,6 @@
-import gameService, { playerData } from "@/gameServices/gameService";
+import gameService from "@/gameServices/gameService";
 import roomService, { player } from "@/gameServices/roomService";
-import { addToScore, computeResult, diceRoll } from "@/utils/diceUtils";
+
 import { Server } from "socket.io";
 
 const SocketHandler = (req: any, res: any) => {
@@ -41,7 +41,6 @@ const SocketHandler = (req: any, res: any) => {
             break;
           case "keep":
             res = gameService.keep(res.id);
-
             break;
           case "pass-fork":
             res = gameService.passFork(res.id);
@@ -63,7 +62,8 @@ const SocketHandler = (req: any, res: any) => {
         gameService.createGame(room);
         console.log("starting game");
         io.to(room.id).emit("game-start", gameService.getGame(room.id));
-        console.log(gameService.getGame(room.id));
+        roomService.deleteRoom(room.id);
+        io.emit("update-rooms", roomService.showRooms());
       });
     });
   }

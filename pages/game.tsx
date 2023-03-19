@@ -1,4 +1,3 @@
-import { RollInterface } from "@/components/RollInterface";
 import { RoomInterface } from "@/components/RoomInterface";
 import { player } from "@/gameServices/roomService";
 import styles from "@/styles/Home.module.css";

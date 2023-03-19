@@ -5,6 +5,7 @@ export interface playerData extends player {
   dice: number;
 }
 export interface gameData extends room {
+  canRoll: boolean | undefined;
   players: playerData[];
   rollingPlayerId: string;
   currentRoll: number[];
@@ -33,6 +34,7 @@ function gameService() {
         canKeep: false,
         canFork: false,
         concluded: false,
+        canRoll: true,
       });
     },
     nextTurn: (gameId: string) => {
@@ -41,6 +43,7 @@ function gameService() {
     newRoll: (gameId: string) => {
       let game = games.find((g) => g.id === gameId);
       if (game) {
+        game.canRoll = false;
         game.canFork = false;
         game.currentRoll = diceRoll(game.dice);
         game.scorables = computeResult(game.currentRoll);
@@ -65,6 +68,7 @@ function gameService() {
         if (game.dice === 0) {
           game.dice = 6;
         }
+        game.canRoll = true;
         game.canKeep = true;
 
         if (player && player.points + game.currentScore === 10000) {
@@ -112,7 +116,6 @@ function gameService() {
         game.dice = 6;
         game.currentScore = 0;
       }
-
       game.currentRoll = [];
       game.canKeep = false;
       game.scorables = [];
@@ -129,6 +132,10 @@ function gameService() {
       } else {
         game.rollingPlayerId = game.players[0].id;
       }
+      game.canRoll = true;
+      game.canFork = false;
+      game.dice = 6;
+      game.scorables = [];
       return game;
     },
     endGame: (gameId: string) => {},
@@ -148,6 +155,7 @@ function gameService() {
         game.rollingPlayerId = game.players[0].id;
       }
       game.scorables = [];
+      game.canRoll = true;
       return game;
     },
     removePlayer: (gameId: string, playerID: string) => {},
@@ -165,7 +173,9 @@ function gameService() {
         canKeep: false,
         canFork: false,
         concluded: false,
+        canRoll: true,
       };
+
       return game;
     },
   };
