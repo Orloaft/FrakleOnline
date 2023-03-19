@@ -118,6 +118,19 @@ function gameService() {
       game.scorables = [];
       return game;
     },
+    skipTurn: (gameId: string) => {
+      let game = games.find((g) => g.id === gameId) as gameData;
+      let player = game.players.find(
+        (p: playerData) => p.id === game.rollingPlayerId
+      ) as playerData;
+      if (game.players.indexOf(player) < game.players.length - 1) {
+        game.rollingPlayerId =
+          game.players[game.players.indexOf(player) + 1].id;
+      } else {
+        game.rollingPlayerId = game.players[0].id;
+      }
+      return game;
+    },
     endGame: (gameId: string) => {},
     bust: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;

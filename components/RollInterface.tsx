@@ -129,7 +129,14 @@ export const RollInterface = (props: {
                 Bust
               </button>
             )}
-
+            <button
+              onClick={() => {
+                props.updateReq({ type: "skip" });
+              }}
+              className="button"
+            >
+              skip
+            </button>
             <div
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >

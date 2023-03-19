@@ -30,6 +30,9 @@ const SocketHandler = (req: any, res: any) => {
         let res = { ...req.game };
 
         switch (req.type) {
+          case "skip":
+            res = gameService.skipTurn(res.id);
+            break;
           case "new-roll":
             res = gameService.newRoll(res.id);
             break;
