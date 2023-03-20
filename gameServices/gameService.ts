@@ -15,6 +15,7 @@ export interface gameData extends room {
   canKeep: boolean;
   canFork: boolean;
   concluded: boolean;
+  log: string[];
 }
 let games: gameData[] = [];
 function gameService() {
@@ -35,6 +36,7 @@ function gameService() {
         canFork: false,
         concluded: false,
         canRoll: true,
+        log: [],
       });
     },
     nextTurn: (gameId: string) => {
@@ -50,6 +52,7 @@ function gameService() {
         if (game.scorables.length === 0) {
           game.canKeep = false;
         }
+        game.log.unshift(game.currentRoll.toString());
         return game;
       }
     },
@@ -59,9 +62,10 @@ function gameService() {
       if (game) {
         let player = game.players.find(
           (p: playerData) => p.id === game.rollingPlayerId
-        );
+        ) as playerData;
         let { newRoll, newScore } = addToScore(score, game.currentRoll);
         game.scorables = computeResult(newRoll);
+        game.log.unshift(player.name + ` picks: ` + score);
         game.currentRoll = newRoll;
         game.currentScore += newScore;
         game.dice = game.currentRoll.length;
@@ -96,6 +100,9 @@ function gameService() {
       if (player.points > 0 || game.currentScore >= 500) {
         if (player.points + game.currentScore <= 10000) {
           player.points += game.currentScore;
+          game.log.unshift(
+            player.name + " kept " + game.currentScore + " points"
+          );
         }
       }
       if (player.points === 10000) {
@@ -119,6 +126,7 @@ function gameService() {
       game.currentRoll = [];
       game.canKeep = false;
       game.scorables = [];
+
       return game;
     },
     skipTurn: (gameId: string) => {
@@ -136,6 +144,7 @@ function gameService() {
       game.canFork = false;
       game.dice = 6;
       game.scorables = [];
+      game.log.unshift(player.name + " was skipped");
       return game;
     },
     endGame: (gameId: string) => {},
@@ -156,6 +165,7 @@ function gameService() {
       }
       game.scorables = [];
       game.canRoll = true;
+      game.log.unshift("bust!");
       return game;
     },
     removePlayer: (gameId: string, playerID: string) => {},
@@ -174,6 +184,7 @@ function gameService() {
         canFork: false,
         concluded: false,
         canRoll: true,
+        log: [],
       };
 
       return game;

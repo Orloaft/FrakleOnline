@@ -214,6 +214,7 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   outline: none;
+  z-index: 3;
 }
 
 .button:hover {
@@ -270,6 +271,7 @@ body {
 .dice_tray{
   position: absolute;
   top:10%;
+  transform: scale(.5);
 }
 
 span {
@@ -308,6 +310,9 @@ span {
 @media only screen and (max-width: 600px) {
   .title {
     flex-direction: column;
+  }
+  .dice_tray{
+   transform: scale(.35);
   }
 }
 @keyframes change-colors {

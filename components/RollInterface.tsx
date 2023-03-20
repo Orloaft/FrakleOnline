@@ -30,7 +30,7 @@ export const RollInterface = (props: {
   roomId: string;
 }) => {
   const [result, setResult] = useState<number[]>([]);
-
+  const [showLog, setShowLog] = useState<boolean>(false);
   const handleScoreSelect = (score: string) => {
     props.updateReq({ type: "score-select", score: score });
   };
@@ -48,24 +48,60 @@ export const RollInterface = (props: {
   return (
     <>
       <Dice results={result} dice={props.game.dice} />
-      <div style={{ position: "absolute", top: " 2%", left: "2%" }}>
-        {props.game.players.map((p) => {
-          return (
-            <div
-              key={p.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: "1rem",
-                fontSize: "2rem",
-              }}
-            >
-              <span>{p.name}</span>
-              <span>{p.points}</span>
-            </div>
-          );
-        })}
+      <div
+        style={{
+          position: "absolute",
+          top: " 2%",
+          left: "2%",
+          display: "flex",
+          flexDirection: "column",
+          maxHeight: "50%",
+        }}
+      >
+        <div style={{ overflow: "scroll" }}>
+          {props.game.players.map((p) => {
+            return (
+              <div
+                key={p.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "1rem",
+                }}
+              >
+                <span>{p.name}</span>
+                <span>{p.points}</span>
+              </div>
+            );
+          })}
+          {showLog &&
+            props.game.log.map((l) => {
+              return (
+                <div
+                  key={uuid()}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                    fontSize: "1rem",
+                    backgroundColor: `#1d1e29`,
+                  }}
+                >
+                  <span>{l}</span>
+                </div>
+              );
+            })}
+        </div>
+        <button
+          className="button"
+          onClick={() => {
+            setShowLog(!showLog);
+          }}
+        >
+          Log
+        </button>
       </div>
+
       <div style={{ position: "absolute", top: "50%" }}>
         <div
           style={{
