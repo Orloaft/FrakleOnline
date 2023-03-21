@@ -1,10 +1,10 @@
-import { RoomInterface } from "@/components/RoomInterface";
+import { SocketGameController } from "@/components/SocketGameController";
 import { player } from "@/gameServices/roomService";
 import styles from "@/styles/Home.module.css";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { uuid } from "uuidv4";
 
-export default function Game() {
+export default function Main() {
   const [playerData, setPlayerData] = useState<player | null>(null);
   const handleSubmit = (e: FormEvent<HTMLFormElement> | any) => {
     e.preventDefault();
@@ -17,12 +17,16 @@ export default function Game() {
       e.target.playername.value = "";
     }
   };
+  useEffect(() => {
+    let user = sessionStorage.getItem("userData");
+    user && setPlayerData(JSON.parse(user));
+  }, []);
   return (
     <>
       <div className={styles.home}>
         {(playerData && (
           <>
-            <RoomInterface user={playerData} />
+            <SocketGameController user={playerData} />
           </>
         )) || (
           <form

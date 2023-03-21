@@ -332,3 +332,6 @@ span {
     color: #ffffff;
   }
 }
+div::-webkit-scrollbar {
+  display: none;
+}

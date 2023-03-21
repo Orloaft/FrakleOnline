@@ -9,7 +9,7 @@ export default function Home() {
         <span>Dice</span>{" "}
       </h1>
 
-      <Link href="/game" className="title" style={{ textDecoration: "none" }}>
+      <Link href="/play" className="title" style={{ textDecoration: "none" }}>
         PLAY
       </Link>
     </div>

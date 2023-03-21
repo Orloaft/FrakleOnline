@@ -5,6 +5,7 @@ import Dice from "./dice";
 import { gameData } from "@/gameServices/gameService";
 import { player } from "@/gameServices/roomService";
 import { uuid } from "uuidv4";
+import { GameLog } from "./GameLog";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -27,7 +28,6 @@ export const RollInterface = (props: {
   game: gameData;
   player: player;
   updateReq: (req: any) => void;
-  roomId: string;
 }) => {
   const [result, setResult] = useState<number[]>([]);
   const [showLog, setShowLog] = useState<boolean>(false);
@@ -74,23 +74,7 @@ export const RollInterface = (props: {
               </div>
             );
           })}
-          {showLog &&
-            props.game.log.map((l) => {
-              return (
-                <div
-                  key={uuid()}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: "1rem",
-                    fontSize: "1rem",
-                    backgroundColor: `#1d1e29`,
-                  }}
-                >
-                  <span>{l}</span>
-                </div>
-              );
-            })}
+          {showLog && <GameLog log={props.game.log} />}
         </div>
         <button
           className="button"
@@ -158,14 +142,7 @@ export const RollInterface = (props: {
                 Bust
               </button>
             )}
-            <button
-              onClick={() => {
-                props.updateReq({ type: "skip" });
-              }}
-              className="button"
-            >
-              skip
-            </button>
+
             <div
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >

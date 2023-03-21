@@ -170,22 +170,7 @@ function gameService() {
     },
     removePlayer: (gameId: string, playerID: string) => {},
     getGame: (id: string) => {
-      let game: gameData = games.find((g) => g.id === id) || {
-        id: "",
-        name: "",
-        host: { name: "", id: "" },
-        players: [],
-        rollingPlayerId: " r.host.id",
-        currentRoll: [],
-        dice: 6,
-        currentScore: 0,
-        scorables: [],
-        canKeep: false,
-        canFork: false,
-        concluded: false,
-        canRoll: true,
-        log: [],
-      };
+      let game: gameData = games.find((g) => g.id === id) as gameData;
 
       return game;
     },
