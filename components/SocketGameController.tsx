@@ -66,7 +66,6 @@ export const SocketGameController = (props: { user: player }) => {
     socket.emit("join-room", id, props.user);
   };
   const createRoom = (e: any) => {
-    e.preventDefault();
     socket.emit("create-room", props.user, e.target.room_name.value);
     e.target.room_name.value = "";
   };

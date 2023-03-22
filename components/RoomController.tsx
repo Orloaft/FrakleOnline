@@ -1,5 +1,6 @@
 import { player, room } from "@/gameServices/roomService";
-import { useEffect } from "react";
+import { validateName } from "@/utils/validateUtils";
+import { useEffect, useState } from "react";
 import { Room } from "./Room";
 
 export const RoomController = (props: {
@@ -25,6 +26,7 @@ export const RoomController = (props: {
     rejoinSession,
   } = props;
   let gameSessionId = sessionStorage.getItem("gameSessionId");
+  const [message, setMessage] = useState<string>("");
   useEffect(() => {
     if (gameSessionId) {
       rejoinSession(gameSessionId);
@@ -61,6 +63,7 @@ export const RoomController = (props: {
         <button className="button" onClick={getRooms}>
           refresh
         </button>
+        <span> {message}</span>
         {gameSessionId && (
           <button
             className="button"
@@ -69,16 +72,29 @@ export const RoomController = (props: {
             rejoin
           </button>
         )}
-        <form onSubmit={(e) => createRoom(e)}>
+        <form
+          onSubmit={(e: any) => {
+            e.preventDefault();
+            if (validateName(e.target.room_name.value) === "valid") {
+              createRoom(e);
+            } else {
+              setMessage(validateName(e.target.room_name.value));
+            }
+          }}
+        >
           <input
             className="input"
             type="text"
             name="room_name"
             autoComplete="off"
           ></input>
+
           <button className="button">make room</button>
         </form>
       </section>
     )
   );
 };
+function setState<T>(arg0: string): [any, any] {
+  throw new Error("Function not implemented.");
+}

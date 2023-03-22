@@ -1,20 +1,24 @@
 import { SocketGameController } from "@/components/SocketGameController";
 import { player } from "@/gameServices/roomService";
 import styles from "@/styles/Home.module.css";
+import { validateName } from "@/utils/validateUtils";
 import { FormEvent, useEffect, useState } from "react";
 import { uuid } from "uuidv4";
 
 export default function Main() {
   const [playerData, setPlayerData] = useState<player | null>(null);
+  const [message, setMessage] = useState<string>("");
   const handleSubmit = (e: FormEvent<HTMLFormElement> | any) => {
     e.preventDefault();
-    if (e.target.playername.value) {
+    if (validateName(e.target.playername.value) === "valid") {
       localStorage.setItem(
         "user",
         JSON.stringify({ id: uuid(), name: e.target.playername.value })
       );
       setPlayerData({ id: uuid(), name: e.target.playername.value });
       e.target.playername.value = "";
+    } else {
+      setMessage(validateName(e.target.playername.value));
     }
   };
   useEffect(() => {
@@ -42,6 +46,7 @@ export default function Main() {
               placeholder="player name"
               name="playername"
             ></input>
+            <span> {message}</span>
             <button className="button">Submit</button>
           </form>
         )}

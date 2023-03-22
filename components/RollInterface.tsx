@@ -9,6 +9,7 @@ import { GameLog } from "./GameLog";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
+
   for (let i = 0; i < dice.length; i++) {
     toggleClasses(dice[i]);
     rolls[i] && (dice[i].dataset.roll = rolls[i].toString());
@@ -16,6 +17,7 @@ function rollDice(rolls: number[]) {
 }
 function pluckDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
+
   for (let i = 0; i < dice.length; i++) {
     rolls[i] && (dice[i].dataset.roll = rolls[i].toString());
   }
@@ -35,7 +37,7 @@ export const RollInterface = (props: {
     props.updateReq({ type: "score-select", score: score });
   };
   useEffect(() => {
-    rollDice(props.game.currentRoll);
+    props.game.isRolling && rollDice(props.game.currentRoll);
     setResult(props.game.currentRoll);
   }, [props.game]);
   useEffect(() => {

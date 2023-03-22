@@ -335,3 +335,6 @@ span {
 div::-webkit-scrollbar {
   display: none;
 }
+.pluck {
+  transition: transform 0s ease-out;
+}

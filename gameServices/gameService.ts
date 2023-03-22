@@ -16,6 +16,7 @@ export interface gameData extends room {
   canFork: boolean;
   concluded: boolean;
   log: string[];
+  isRolling: boolean;
 }
 let games: gameData[] = [];
 function gameService() {
@@ -37,6 +38,7 @@ function gameService() {
         concluded: false,
         canRoll: true,
         log: [],
+        isRolling: true,
       });
     },
     nextTurn: (gameId: string) => {
@@ -45,6 +47,7 @@ function gameService() {
     newRoll: (gameId: string) => {
       let game = games.find((g) => g.id === gameId);
       if (game) {
+        game.isRolling = true;
         game.canRoll = false;
         game.canFork = false;
         game.currentRoll = diceRoll(game.dice);
@@ -60,6 +63,7 @@ function gameService() {
       let game = games.find((g) => g.id === gameId) as gameData;
 
       if (game) {
+        game.isRolling = false;
         let player = game.players.find(
           (p: playerData) => p.id === game.rollingPlayerId
         ) as playerData;
