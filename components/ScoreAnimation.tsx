@@ -22,7 +22,7 @@ export const ScoreAnimation = (props: { score: string[] }) => {
             style={{ fontSize: "1.5rem" }}
           >
             {" "}
-            + {s}
+            {s}
           </span>
         );
       })}

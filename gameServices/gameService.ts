@@ -105,6 +105,7 @@ function gameService() {
     keep: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
       game.lastPick.pop();
+      game.lastPick.push(game.currentScore.toString());
       let player = game.players.find(
         (p: playerData) => p.id === game.rollingPlayerId
       ) as playerData;
@@ -162,6 +163,7 @@ function gameService() {
     bust: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
       game.lastPick.pop();
+      game.lastPick.push("BUST!");
       let player = game.players.find(
         (p: playerData) => p.id === game.rollingPlayerId
       ) as playerData;

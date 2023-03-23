@@ -5,7 +5,7 @@ export default function RulesPage() {
   const [side, setSide] = useState<string>("front");
   return (
     <div className={styles.home}>
-      <Link href="/" className="button">
+      <Link href="/play" className="button">
         Back
       </Link>
       {(side === "front" && (
@@ -17,6 +17,7 @@ export default function RulesPage() {
             gap: "1rem",
             overflowY: "scroll",
             maxWidth: "100%",
+            maxHeight: "80%",
           }}
         >
           <span>Here are the rules of the game:</span>
