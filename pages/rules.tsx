@@ -264,6 +264,7 @@ export default function RulesPage() {
             style={{
               display: "flex",
               transform: "scale(.25)",
+              justifyContent: "space-between",
             }}
           >
             <ol className="die-list even-roll" data-roll="1" id="die-1">

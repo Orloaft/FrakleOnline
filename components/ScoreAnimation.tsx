@@ -18,8 +18,11 @@ export const ScoreAnimation = (props: { score: string[] }) => {
           <span
             key={s}
             id="points"
-            className="points title"
-            style={{ fontSize: "1.5rem" }}
+            className="points"
+            style={{
+              fontSize: "2.5rem",
+              color: s === "BUST!" ? `crimson` : `turquoise`,
+            }}
           >
             {" "}
             {s}
