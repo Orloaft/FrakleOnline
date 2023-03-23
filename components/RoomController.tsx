@@ -101,7 +101,7 @@ export const RoomController = (props: {
             href="/rules"
             className="button"
           >
-            How to play
+            <span>How to play</span>
           </Link>
         </form>
       </section>

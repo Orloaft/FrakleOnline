@@ -97,44 +97,58 @@ export const RollInterface = (props: {
       <div style={{ position: "absolute", top: "50%" }}>
         {props.game.rollingPlayerId === props.player.id && (
           <>
-            <button
-              className="button"
-              disabled={!props.game.canRoll}
-              style={{ zIndex: "7", margin: "2rem" }}
-              onClick={() => {
-                props.updateReq({ type: "new-roll" });
-              }}
-            >
-              {props.game.canFork ? `Fork` : `Roll ${props.game.dice} dice`}
-            </button>
             {(props.game.canFork && (
-              <button
-                className="button"
-                onClick={() => {
-                  props.updateReq({ type: "pass-fork" });
-                }}
-              >
-                Pass
-              </button>
+              <>
+                <span>Fork?</span>
+                <button
+                  onClick={() => {
+                    props.updateReq({ type: "new-roll" });
+                  }}
+                  className="button"
+                >
+                  yes
+                </button>
+                <button
+                  onClick={() => {
+                    props.updateReq({ type: "pass-fork" });
+                  }}
+                  className="button"
+                >
+                  no
+                </button>
+              </>
             )) || (
-              <button
-                onClick={() => {
-                  props.updateReq({ type: "keep" });
-                }}
-                className="button"
-                disabled={!props.game.canKeep}
-              >
-                Keep
-              </button>
+              <>
+                <button
+                  className="button"
+                  disabled={!props.game.canRoll}
+                  style={{ zIndex: "7", margin: "2rem" }}
+                  onClick={() => {
+                    props.updateReq({ type: "new-roll" });
+                  }}
+                >
+                  Roll {props.game.dice} dice
+                </button>
+
+                <button
+                  onClick={() => {
+                    props.updateReq({ type: "keep" });
+                  }}
+                  className="button"
+                  disabled={!props.game.canKeep}
+                >
+                  Keep
+                </button>
+              </>
             )}
             {props.game.rollingPlayerId === props.player.id && (
               <button
                 className="button"
                 onClick={() => {
-                  props.updateReq({ type: "bust" });
+                  props.updateReq({ type: "skip" });
                 }}
               >
-                Bust
+                End turn
               </button>
             )}
 

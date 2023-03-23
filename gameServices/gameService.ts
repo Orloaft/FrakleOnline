@@ -44,10 +44,26 @@ function gameService() {
       });
     },
     nextTurn: (gameId: string) => {
-      let game = games.find((g) => g.id === gameId);
+      let game = games.find((g) => g.id === gameId) as gameData;
+      let player = game.players.find(
+        (p: playerData) => p.id === game.rollingPlayerId
+      ) as playerData;
+      game.dice = 6;
+      game.lastPick.pop();
+      game.currentScore = 0;
+      if (game.players.indexOf(player) < game.players.length - 1) {
+        game.rollingPlayerId =
+          game.players[game.players.indexOf(player) + 1].id;
+      } else {
+        game.rollingPlayerId = game.players[0].id;
+      }
+      game.scorables = [];
+      game.canRoll = true;
+      return game;
     },
     newRoll: (gameId: string) => {
-      let game = games.find((g) => g.id === gameId);
+      let game = games.find((g) => g.id === gameId) as gameData;
+
       if (game) {
         game.lastPick.pop();
         game.isRolling = true;
@@ -57,6 +73,11 @@ function gameService() {
         game.scorables = computeResult(game.currentRoll);
         if (game.scorables.length === 0) {
           game.canKeep = false;
+          game.lastPick.pop();
+          game.lastPick.push("BUST!");
+          game.currentScore = 0;
+
+          game.log.unshift("bust!");
         }
         game.log.unshift(game.currentRoll.toString());
         return game;
@@ -72,7 +93,7 @@ function gameService() {
         ) as playerData;
         let { newRoll, newScore } = addToScore(score, game.currentRoll);
         game.lastPick.pop();
-        game.lastPick.push(score);
+        game.lastPick.push("+ " + score);
         game.scorables = computeResult(newRoll);
         game.log.unshift(player.name + ` picks: ` + score);
         game.currentRoll = newRoll;
@@ -84,7 +105,8 @@ function gameService() {
           game.lastPick.push("HOT DICE");
         }
         game.canRoll = true;
-        game.canKeep = true;
+        (player.points > 0 || game.currentScore >= 500) &&
+          (game.canKeep = true);
 
         if (player && player.points + game.currentScore === 10000) {
           game.scorables.length && (game.canKeep = false);
@@ -105,7 +127,8 @@ function gameService() {
     keep: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
       game.lastPick.pop();
-      game.lastPick.push(game.currentScore.toString());
+      game.lastPick.push("+ " + game.currentScore.toString());
+      let prevPlayerId = game.rollingPlayerId;
       let player = game.players.find(
         (p: playerData) => p.id === game.rollingPlayerId
       ) as playerData;
@@ -129,7 +152,7 @@ function gameService() {
         game.rollingPlayerId = game.players[0].id;
         player = game.players[0];
       }
-      if (player.points > 0) {
+      if (player.points > 0 && player.id !== prevPlayerId) {
         game.canFork = true;
       } else {
         game.dice = 6;
