@@ -306,13 +306,28 @@ span {
   animation: change-colors 5s ease-in-out infinite;
   
 }
-
+.currentScore {
+  position: absolute;
+  top: 0;
+     right: 0;
+    font-size: 2rem;
+            display: flex;
+            flex-direction: column;
+}
 @media only screen and (max-width: 600px) {
   .title {
     flex-direction: column;
   }
   .dice_tray{
    transform: scale(.35);
+  }
+  .currentScore {
+    position: absolute;
+    top: 0;
+       right: 0;
+      font-size: 1rem;
+              display: flex;
+              flex-direction: column;
   }
 }
 @keyframes change-colors {
@@ -332,9 +347,33 @@ span {
     color: #ffffff;
   }
 }
+
+
 div::-webkit-scrollbar {
   display: none;
 }
-.pluck {
-  transition: transform 0s ease-out;
+.score_link {
+  animation: change-colors 5s ease-in-out infinite;
+  cursor: pointer;
 }
+
+.points{
+ position: absolute;
+top:0;
+  transition: 1.5s;
+  opacity:0;
+}
+
+/* Apply the animation to the element */
+.points-gained {
+  top:50vh;
+  opacity: 1;
+  
+}
+.fade-away {
+  transform: translateY(50vh);
+  opacity: 0;
+  transition: .5s; 
+  
+}
+

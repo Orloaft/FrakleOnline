@@ -1,5 +1,6 @@
 import { player, room } from "@/gameServices/roomService";
 import { validateName } from "@/utils/validateUtils";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Room } from "./Room";
 
@@ -90,11 +91,20 @@ export const RoomController = (props: {
           ></input>
 
           <button className="button">make room</button>
+          <Link
+            style={{
+              textDecoration: "none",
+              position: "absolute",
+              top: 5,
+              right: 5,
+            }}
+            href="/rules"
+            className="button"
+          >
+            How to play
+          </Link>
         </form>
       </section>
     )
   );
 };
-function setState<T>(arg0: string): [any, any] {
-  throw new Error("Function not implemented.");
-}

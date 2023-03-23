@@ -6,6 +6,7 @@ import { gameData } from "@/gameServices/gameService";
 import { player } from "@/gameServices/roomService";
 import { uuid } from "uuidv4";
 import { GameLog } from "./GameLog";
+import { ScoreAnimation } from "./ScoreAnimation";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -49,7 +50,12 @@ export const RollInterface = (props: {
 
   return (
     <>
+      <div className="currentScore">
+        <span>{currentPlayer && currentPlayer.name}</span>{" "}
+        <span>Score: {props.game.currentScore}</span>
+      </div>
       <Dice results={result} dice={props.game.dice} />
+      <ScoreAnimation score={props.game.lastPick} />
       <div
         style={{
           position: "absolute",
@@ -89,19 +95,6 @@ export const RollInterface = (props: {
       </div>
 
       <div style={{ position: "absolute", top: "50%" }}>
-        <div
-          style={{
-            position: "absolute",
-            top: "0",
-            left: "-70%",
-            fontSize: "2rem",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <span>{currentPlayer && currentPlayer.name}</span>{" "}
-          <span>Score: {props.game.currentScore}</span>
-        </div>
         {props.game.rollingPlayerId === props.player.id && (
           <>
             <button

@@ -17,6 +17,7 @@ export interface gameData extends room {
   concluded: boolean;
   log: string[];
   isRolling: boolean;
+  lastPick: string[];
 }
 let games: gameData[] = [];
 function gameService() {
@@ -39,6 +40,7 @@ function gameService() {
         canRoll: true,
         log: [],
         isRolling: true,
+        lastPick: [""],
       });
     },
     nextTurn: (gameId: string) => {
@@ -47,6 +49,7 @@ function gameService() {
     newRoll: (gameId: string) => {
       let game = games.find((g) => g.id === gameId);
       if (game) {
+        game.lastPick.pop();
         game.isRolling = true;
         game.canRoll = false;
         game.canFork = false;
@@ -68,6 +71,8 @@ function gameService() {
           (p: playerData) => p.id === game.rollingPlayerId
         ) as playerData;
         let { newRoll, newScore } = addToScore(score, game.currentRoll);
+        game.lastPick.pop();
+        game.lastPick.push(score);
         game.scorables = computeResult(newRoll);
         game.log.unshift(player.name + ` picks: ` + score);
         game.currentRoll = newRoll;
@@ -75,6 +80,8 @@ function gameService() {
         game.dice = game.currentRoll.length;
         if (game.dice === 0) {
           game.dice = 6;
+          game.lastPick.pop();
+          game.lastPick.push("HOT DICE");
         }
         game.canRoll = true;
         game.canKeep = true;
@@ -97,7 +104,7 @@ function gameService() {
     },
     keep: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-
+      game.lastPick.pop();
       let player = game.players.find(
         (p: playerData) => p.id === game.rollingPlayerId
       ) as playerData;
@@ -154,7 +161,7 @@ function gameService() {
     endGame: (gameId: string) => {},
     bust: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-
+      game.lastPick.pop();
       let player = game.players.find(
         (p: playerData) => p.id === game.rollingPlayerId
       ) as playerData;
