@@ -16,6 +16,7 @@ export const ScoreAnimation = (props: { score: string[] }) => {
       {props.score.map((s: string) => {
         return (
           <span
+            key={s}
             id="points"
             className="points title"
             style={{ fontSize: "1.5rem" }}
