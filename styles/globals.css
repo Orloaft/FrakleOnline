@@ -377,3 +377,24 @@ top:0;
   
 }
 
+.alert {
+  background-color: #1d1e29;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.2em;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  outline: none;
+  z-index: 3;
+}
+
+.alert:hover {
+  background-color: #3ef5f899;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-5px);
+  opacity: .2;
+}

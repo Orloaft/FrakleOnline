@@ -2,6 +2,7 @@ import { player, room } from "@/gameServices/roomService";
 import { validateName } from "@/utils/validateUtils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import CopyLinkAlert from "./CopyLinkAlert";
 import { Room } from "./Room";
 
 export const RoomController = (props: {
@@ -33,6 +34,7 @@ export const RoomController = (props: {
       rejoinSession(gameSessionId);
     }
   }, []);
+  const copyLink = () => {};
   return (
     (room && room.players.find((p: player) => p.id === user.id) && (
       <>
@@ -41,9 +43,13 @@ export const RoomController = (props: {
           Leave
         </button>
         {room.host.id === props.user.id && (
-          <button className="button" onClick={startGame}>
-            Start game
-          </button>
+          <>
+            {" "}
+            <button className="button" onClick={startGame}>
+              Start game
+            </button>
+            <CopyLinkAlert link={process.env.SERVER_URL + "/" + room.id} />
+          </>
         )}
       </>
     )) || (
