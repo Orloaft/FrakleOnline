@@ -2,9 +2,12 @@ body {
   margin: 0;
   overflow-y: hidden;
 }
-/* div {
-  -webkit-text-stroke: 2px #00ffeead;
-} */
+* {
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
 .dice {
   align-items: center;
   display: grid;
@@ -362,6 +365,8 @@ div::-webkit-scrollbar {
 top:0;
   transition: 1.5s;
   opacity:0;
+
+
 }
 
 /* Apply the animation to the element */
