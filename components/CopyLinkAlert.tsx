@@ -7,7 +7,7 @@ const CopyLinkAlert = ({ link }: { link: string }) => {
     if (visible) {
       const timeout = setTimeout(() => {
         setVisible(false);
-      }, 5000);
+      }, 2500);
       return () => clearTimeout(timeout);
     }
   }, [visible]);

@@ -20,6 +20,7 @@ export const ScoreAnimation = (props: { score: string[] }) => {
             id="points"
             className="points"
             style={{
+              pointerEvents: "none",
               fontSize: "2.5rem",
               color: s === "BUST!" ? `crimson` : `turquoise`,
             }}
