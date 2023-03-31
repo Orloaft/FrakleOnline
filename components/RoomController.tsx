@@ -48,7 +48,9 @@ export const RoomController = (props: {
             <button className="button" onClick={startGame}>
               Start game
             </button>
-            <CopyLinkAlert link={process.env.SERVER_URL + "/" + room.id} />
+            <CopyLinkAlert
+              link={process.env.NEXT_PUBLIC_SERVER_URL + "/invite/" + room.id}
+            />
           </>
         )}
       </>

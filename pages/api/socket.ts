@@ -72,6 +72,13 @@ const SocketHandler = (req: any, res: any) => {
         roomService.deleteRoom(room.id);
         io.emit("update-rooms", roomService.showRooms());
       });
+      socket.on("find_room", (roomid: string) => {
+        let room = roomService.getRoom(roomid);
+        (room && socket.join(roomid)) ||
+          io
+            .to(socket.id)
+            .emit("find_room_res", "sorry the room no longer exists");
+      });
     });
   }
 

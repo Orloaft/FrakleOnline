@@ -8,7 +8,10 @@ import { GameController } from "./GameController";
 import { RoomController } from "./RoomController";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
-export const SocketGameController = (props: { user: player }) => {
+export const SocketGameController = (props: {
+  user: player;
+  roomid?: string;
+}) => {
   const [room, setRoom] = useState<any>(false);
   const [game, setGame] = useState<gameData>();
   const [rooms, setRooms] = useState<room[]>([]);
@@ -63,7 +66,7 @@ export const SocketGameController = (props: { user: player }) => {
     socket.emit("start-game", room);
   };
   const joinRoom = (id: string) => {
-    socket.emit("join-room", id, props.user);
+    socket && socket.emit("join-room", id, props.user);
   };
   const createRoom = (e: any) => {
     socket.emit("create-room", props.user, e.target.room_name.value);
@@ -76,6 +79,16 @@ export const SocketGameController = (props: { user: player }) => {
   return (
     (game && (
       <GameController game={game} user={props.user} updateReq={updateReq} />
+    )) ||
+    (props.roomid && !room && (
+      <button
+        className="button"
+        onClick={() => {
+          joinRoom(props.roomid as string);
+        }}
+      >
+        join room
+      </button>
     )) || (
       <RoomController
         room={room}
