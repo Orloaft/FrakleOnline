@@ -68,8 +68,8 @@ export const SocketGameController = (props: {
   const joinRoom = (id: string) => {
     socket && socket.emit("join-room", id, props.user);
   };
-  const createRoom = (e: any) => {
-    socket.emit("create-room", props.user, e.target.room_name.value);
+  const createRoom = (e: any, isPrivate: boolean) => {
+    socket.emit("create-room", props.user, e.target.room_name.value, isPrivate);
     e.target.room_name.value = "";
   };
   const getRooms = () => {

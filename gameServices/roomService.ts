@@ -10,14 +10,26 @@ export interface room {
   name: string;
   players: player[];
   host: player;
+  isPrivate: boolean;
 }
 
 let rooms: room[] = [];
 
 function roomService() {
   return {
-    createRoom: (host: player, name: string, socketId: string) => {
-      rooms.push({ id: socketId, name: name, players: [host], host: host });
+    createRoom: (
+      host: player,
+      name: string,
+      socketId: string,
+      isPrivate: boolean
+    ) => {
+      rooms.push({
+        id: socketId,
+        name: name,
+        players: [host],
+        host: host,
+        isPrivate: isPrivate,
+      });
     },
     showRooms: () => {
       return rooms;

@@ -15,13 +15,16 @@ const SocketHandler = (req: any, res: any) => {
       socket.on("get-rooms", () => {
         io.to(socket.id).emit("update-rooms", roomService.showRooms());
       });
-      socket.on("create-room", (host: player, name: string) => {
-        let roomId = uuid();
-        roomService.createRoom(host, name, roomId);
-        socket.join(roomId);
-        io.emit("update-rooms", roomService.showRooms());
-        io.to(socket.id).emit("update-room", roomService.getRoom(roomId));
-      });
+      socket.on(
+        "create-room",
+        (host: player, name: string, isPrivate: boolean) => {
+          let roomId = uuid();
+          roomService.createRoom(host, name, roomId, isPrivate);
+          socket.join(roomId);
+          io.emit("update-rooms", roomService.showRooms());
+          io.to(socket.id).emit("update-room", roomService.getRoom(roomId));
+        }
+      );
       socket.on("join-room", (id: string, player: player) => {
         socket.join(id);
         roomService.joinRoom(id, player);

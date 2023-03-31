@@ -2,6 +2,7 @@ import { player, room } from "@/gameServices/roomService";
 import { validateName } from "@/utils/validateUtils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import CheckBox from "./CheckBox";
 import CopyLinkAlert from "./CopyLinkAlert";
 import { Room } from "./Room";
 
@@ -12,7 +13,7 @@ export const RoomController = (props: {
   leaveRoom: () => void;
   startGame: () => void;
   joinRoom: (id: string) => void;
-  createRoom: (e: any) => void;
+  createRoom: (e: any, isPrivate: boolean) => void;
   getRooms: () => void;
   rejoinSession: (gameSessionId: string) => void;
 }) => {
@@ -28,6 +29,8 @@ export const RoomController = (props: {
     rejoinSession,
   } = props;
   let gameSessionId = sessionStorage.getItem("gameSessionId");
+  const [isPrivate, setIsPrivate] = useState(false);
+
   const [message, setMessage] = useState<string>("");
   useEffect(() => {
     if (gameSessionId) {
@@ -58,15 +61,17 @@ export const RoomController = (props: {
       <section>
         <ul>
           {rooms.map((room) => {
-            return (
-              <li
-                key={room.id}
-                className="li"
-                onClick={() => joinRoom(room.id)}
-              >
-                {room.name}
-              </li>
-            );
+            if (!room.isPrivate) {
+              return (
+                <li
+                  key={room.id}
+                  className="li"
+                  onClick={() => joinRoom(room.id)}
+                >
+                  {room.name}
+                </li>
+              );
+            }
           })}
         </ul>
         <button className="button" onClick={getRooms}>
@@ -85,7 +90,7 @@ export const RoomController = (props: {
           onSubmit={(e: any) => {
             e.preventDefault();
             if (validateName(e.target.room_name.value) === "valid") {
-              createRoom(e);
+              createRoom(e, isPrivate);
             } else {
               setMessage(validateName(e.target.room_name.value));
             }
@@ -99,6 +104,7 @@ export const RoomController = (props: {
           ></input>
 
           <button className="button">make room</button>
+          <CheckBox isPrivate={isPrivate} setIsPrivate={setIsPrivate} />
           <Link
             style={{
               textDecoration: "none",
