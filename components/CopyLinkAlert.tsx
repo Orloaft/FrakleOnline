@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 const CopyLinkAlert = ({ link }: { link: string }) => {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (visible) {

@@ -65,6 +65,9 @@ export const SocketGameController = (props: {
   const startGame = () => {
     socket.emit("start-game", room);
   };
+  const sendMessage = (msg: string) => {
+    socket.emit("send_message", room.id, props.user, msg);
+  };
   const joinRoom = (id: string) => {
     socket && socket.emit("join-room", id, props.user);
   };
@@ -100,6 +103,7 @@ export const SocketGameController = (props: {
         createRoom={createRoom}
         getRooms={getRooms}
         rejoinSession={rejoinSession}
+        sendMessage={sendMessage}
       />
     )
   );

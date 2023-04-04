@@ -11,6 +11,7 @@ export interface room {
   players: player[];
   host: player;
   isPrivate: boolean;
+  chat: string[];
 }
 
 let rooms: room[] = [];
@@ -29,6 +30,7 @@ function roomService() {
         players: [host],
         host: host,
         isPrivate: isPrivate,
+        chat: [],
       });
     },
     showRooms: () => {
@@ -43,6 +45,10 @@ function roomService() {
     joinRoom: (id: string, player: player) => {
       let room = rooms.find((r) => r.id === id);
       room && room.players.push(player);
+    },
+    sendMessage: (id: string, player: player, msg: string) => {
+      let room = rooms.find((r) => r.id === id);
+      room?.chat.push(player.name + ": " + msg);
     },
     leaveRoom: (id: string, player: player) => {
       let oldRoom = rooms.find((room) => room.id === id);

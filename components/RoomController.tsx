@@ -16,6 +16,7 @@ export const RoomController = (props: {
   createRoom: (e: any, isPrivate: boolean) => void;
   getRooms: () => void;
   rejoinSession: (gameSessionId: string) => void;
+  sendMessage: (msg: string) => void;
 }) => {
   let {
     room,
@@ -27,6 +28,7 @@ export const RoomController = (props: {
     createRoom,
     getRooms,
     rejoinSession,
+    sendMessage,
   } = props;
   let gameSessionId = sessionStorage.getItem("gameSessionId");
   const [isPrivate, setIsPrivate] = useState(false);
@@ -41,7 +43,7 @@ export const RoomController = (props: {
   return (
     (room && room.players.find((p: player) => p.id === user.id) && (
       <>
-        <Room room={room} />
+        <Room sendMessage={sendMessage} room={room} />
         <button className="button" onClick={leaveRoom}>
           Leave
         </button>
@@ -58,7 +60,13 @@ export const RoomController = (props: {
         )}
       </>
     )) || (
-      <section>
+      <section
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <ul>
           {rooms.map((room) => {
             if (!room.isPrivate) {
@@ -87,6 +95,11 @@ export const RoomController = (props: {
           </button>
         )}
         <form
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
           onSubmit={(e: any) => {
             e.preventDefault();
             if (validateName(e.target.room_name.value) === "valid") {
@@ -101,6 +114,7 @@ export const RoomController = (props: {
             type="text"
             name="room_name"
             autoComplete="off"
+            placeholder="room name"
           ></input>
 
           <button className="button">make room</button>

@@ -25,6 +25,10 @@ const SocketHandler = (req: any, res: any) => {
           io.to(socket.id).emit("update-room", roomService.getRoom(roomId));
         }
       );
+      socket.on("send_message", (id: string, player: player, msg: string) => {
+        roomService.sendMessage(id, player, msg);
+        io.to(id).emit("update-room", roomService.getRoom(id));
+      });
       socket.on("join-room", (id: string, player: player) => {
         socket.join(id);
         roomService.joinRoom(id, player);
