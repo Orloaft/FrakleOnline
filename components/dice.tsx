@@ -1,4 +1,6 @@
-export default function Dice(props: { results: number[]; dice: number }) {
+import React from "react";
+
+function Dice(props: { results: number[]; dice: number }) {
   return (
     <div className="dice_tray" style={{ width: "100%" }}>
       <div className="dice">
@@ -228,3 +230,4 @@ export default function Dice(props: { results: number[]; dice: number }) {
     </div>
   );
 }
+export default React.memo(Dice);
