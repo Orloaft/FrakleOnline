@@ -468,6 +468,8 @@ input[type="checkbox"]:focus-visible {
   }
   .dice_tray{
    transform: scale(.35);
+   top:0;
+   
   }
   .currentScore {
     position: absolute;
@@ -485,6 +487,7 @@ input[type="checkbox"]:focus-visible {
   justify-content: center;
   align-items: center;
   height: 60px;
+
 }
 
 .chat-box-header h2 {

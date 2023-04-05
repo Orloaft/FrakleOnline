@@ -43,6 +43,10 @@ function gameService() {
         lastPick: [""],
       });
     },
+    sendMessage: (gameId: string, player: player, msg: string) => {
+      let game = games.find((g) => g.id === gameId) as gameData;
+      game.chat.push(player.name + ": " + msg);
+    },
     nextTurn: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
       let player = game.players.find(

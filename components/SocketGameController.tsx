@@ -6,6 +6,7 @@ import { gameData } from "@/gameServices/gameService";
 import { io, Socket } from "socket.io-client";
 import { GameController } from "./GameController";
 import { RoomController } from "./RoomController";
+import { Chat } from "./Chat";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 export const SocketGameController = (props: {
@@ -66,7 +67,11 @@ export const SocketGameController = (props: {
     socket.emit("start-game", room);
   };
   const sendMessage = (msg: string) => {
-    socket.emit("send_message", room.id, props.user, msg);
+    if (game) {
+      socket.emit("send_game_message", game.id, props.user, msg);
+    } else {
+      socket.emit("send_room_message", room.id, props.user, msg);
+    }
   };
   const joinRoom = (id: string) => {
     socket && socket.emit("join-room", id, props.user);
@@ -81,7 +86,21 @@ export const SocketGameController = (props: {
 
   return (
     (game && (
-      <GameController game={game} user={props.user} updateReq={updateReq} />
+      <>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: `100%`,
+            zIndex: 4,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Chat messages={game.chat} sendMessage={sendMessage} />
+        </div>
+        <GameController game={game} user={props.user} updateReq={updateReq} />
+      </>
     )) ||
     (props.roomid && !room && (
       <button

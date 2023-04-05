@@ -1,4 +1,4 @@
-import gameService from "@/gameServices/gameService";
+import gameService, { playerData } from "@/gameServices/gameService";
 import roomService, { player } from "@/gameServices/roomService";
 
 import { Server } from "socket.io";
@@ -25,10 +25,21 @@ const SocketHandler = (req: any, res: any) => {
           io.to(socket.id).emit("update-room", roomService.getRoom(roomId));
         }
       );
-      socket.on("send_message", (id: string, player: player, msg: string) => {
-        roomService.sendMessage(id, player, msg);
-        io.to(id).emit("update-room", roomService.getRoom(id));
-      });
+      socket.on(
+        "send_room_message",
+        (id: string, player: player | playerData, msg: string) => {
+          roomService.sendMessage(id, player, msg);
+          io.to(id).emit("update-room", roomService.getRoom(id));
+        }
+      );
+      socket.on(
+        "send_game_message",
+        (id: string, player: player | playerData, msg: string) => {
+          gameService.sendMessage(id, player, msg);
+
+          io.to(id).emit("game-update-response", gameService.getGame(id));
+        }
+      );
       socket.on("join-room", (id: string, player: player) => {
         socket.join(id);
         roomService.joinRoom(id, player);

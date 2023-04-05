@@ -33,7 +33,7 @@ export const Chat = ({
         <>
           <div className="chat-box-body">
             {messages.map((message, index) => (
-              <div key={index} className="chat-message">
+              <div key={message} className="chat-message">
                 {message}
               </div>
             ))}
