@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 
 import Dice from "./dice";
 
-import { gameData } from "@/gameServices/gameService";
+import { gameData, playerData } from "@/gameServices/gameService";
 import { player } from "@/gameServices/roomService";
 import { uuid } from "uuidv4";
 import { GameLog } from "./GameLog";
-import { ScoreAnimation } from "./ScoreAnimation";
+import ScoreAnimation from "./ScoreAnimation";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -28,24 +28,22 @@ function toggleClasses(die: HTMLElement) {
   die.classList.toggle("even-roll");
 }
 export const RollInterface = (props: {
-  game: gameData;
+  game: any;
   player: player;
   updateReq: (req: any) => void;
 }) => {
-  const [result, setResult] = useState<number[]>([]);
   const [showLog, setShowLog] = useState<boolean>(false);
   const handleScoreSelect = (score: string) => {
     props.updateReq({ type: "score-select", score: score });
   };
   useEffect(() => {
     props.game.isRolling && rollDice(props.game.currentRoll);
-    setResult(props.game.currentRoll);
-  }, [props.game]);
+  }, [props.game.currentRoll]);
   useEffect(() => {
     if (props.game.currentRoll.length > 0) pluckDice(props.game.currentRoll);
   }, [props.game.currentRoll]);
   let currentPlayer = props.game.players.find(
-    (p) => p.id === props.game.rollingPlayerId
+    (p: playerData) => p.id === props.game.rollingPlayerId
   );
 
   return (
@@ -54,7 +52,7 @@ export const RollInterface = (props: {
         <span>{currentPlayer && currentPlayer.name}</span>{" "}
         <span>Score: {props.game.currentScore}</span>
       </div>
-      <Dice results={result} dice={props.game.dice} />
+      <Dice results={props.game.currentRoll} dice={props.game.dice} />
       <ScoreAnimation score={props.game.lastPick} />
       <div
         style={{
@@ -67,7 +65,7 @@ export const RollInterface = (props: {
         }}
       >
         <div style={{ overflow: "scroll" }}>
-          {props.game.players.map((p) => {
+          {props.game.players.map((p: playerData) => {
             return (
               <div
                 key={p.id}
@@ -155,7 +153,7 @@ export const RollInterface = (props: {
             <div
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              {props.game.scorables.map((el) => {
+              {props.game.scorables.map((el: string) => {
                 if (typeof el === "string") {
                   return (
                     <button

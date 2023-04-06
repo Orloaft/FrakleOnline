@@ -1,4 +1,4 @@
-import gameService, { playerData } from "@/gameServices/gameService";
+import gameService, { gameData, playerData } from "@/gameServices/gameService";
 import roomService, { player } from "@/gameServices/roomService";
 
 import { Server } from "socket.io";
@@ -37,7 +37,7 @@ const SocketHandler = (req: any, res: any) => {
         (id: string, player: player | playerData, msg: string) => {
           gameService.sendMessage(id, player, msg);
 
-          io.to(id).emit("game-update-response", gameService.getGame(id));
+          io.to(id).emit("update-chat", gameService.getGame(id).chat);
         }
       );
       socket.on("join-room", (id: string, player: player) => {
@@ -46,31 +46,31 @@ const SocketHandler = (req: any, res: any) => {
 
         io.to(id).emit("update-room", roomService.getRoom(id));
       });
-      socket.on("game-update", (req, id) => {
-        let res = { ...req.game };
+      socket.on("game-update", (req) => {
+        let res: gameData = { ...(gameService.getGame(req.id) as gameData) };
 
         switch (req.type) {
           case "skip":
-            res = gameService.nextTurn(res.id);
+            res = gameService.nextTurn(req.id);
             break;
           case "new-roll":
-            res = gameService.newRoll(res.id);
+            res = gameService.newRoll(req.id) as gameData;
             break;
           case "score-select":
-            res = gameService.scoreSelect(res.id, req.score);
+            res = gameService.scoreSelect(req.id, req.score);
             break;
           case "keep":
-            res = gameService.keep(res.id);
+            res = gameService.keep(req.id);
             break;
           case "pass-fork":
-            res = gameService.passFork(res.id);
+            res = gameService.passFork(req.id);
             break;
           case "bust":
-            res = gameService.bust(res.id);
+            res = gameService.bust(req.id);
             break;
         }
 
-        io.to(id).emit("game-update-response", res);
+        io.to(req.id).emit("game-update-response", res);
       });
       socket.on("leave-room", (id: string, player: player) => {
         roomService.leaveRoom(id, player);

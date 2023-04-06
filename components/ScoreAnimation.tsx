@@ -1,6 +1,7 @@
+import React from "react";
 import { useEffect } from "react";
 
-export const ScoreAnimation = (props: { score: string[] }) => {
+const ScoreAnimation = (props: { score: string[] }) => {
   useEffect(() => {
     const points = document.getElementById("points");
 
@@ -33,3 +34,4 @@ export const ScoreAnimation = (props: { score: string[] }) => {
     </>
   );
 };
+export default React.memo(ScoreAnimation);

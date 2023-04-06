@@ -6,7 +6,7 @@ import { GameOver } from "./GameOver";
 import { RollInterface } from "./RollInterface";
 
 export const GameController = (props: {
-  game: gameData;
+  game: any;
   user: player;
   updateReq: (req: any) => void;
 }) => {

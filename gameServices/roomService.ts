@@ -48,7 +48,7 @@ function roomService() {
     },
     sendMessage: (id: string, player: player, msg: string) => {
       let room = rooms.find((r) => r.id === id);
-      room?.chat.push(player.name + ": " + msg);
+      room?.chat.unshift(player.name + ": " + msg);
     },
     leaveRoom: (id: string, player: player) => {
       let oldRoom = rooms.find((room) => room.id === id);

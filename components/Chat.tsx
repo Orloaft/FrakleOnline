@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { uuid } from "uuidv4";
 
 export const Chat = ({
   messages,
@@ -33,7 +34,7 @@ export const Chat = ({
         <>
           <div className="chat-box-body">
             {messages.map((message, index) => (
-              <div key={message} className="chat-message">
+              <div key={uuid()} className="chat-message">
                 {message}
               </div>
             ))}
@@ -45,6 +46,7 @@ export const Chat = ({
               placeholder="Type a message..."
               value={inputValue}
               onChange={handleInputChange}
+              autoComplete="off"
             />
             <button type="submit">Send</button>
           </form>

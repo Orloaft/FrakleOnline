@@ -5,19 +5,21 @@ export interface playerData extends player {
   dice: number;
 }
 export interface gameData extends room {
-  canRoll: boolean | undefined;
-  players: playerData[];
-  rollingPlayerId: string;
-  currentRoll: number[];
-  dice: number;
-  currentScore: number;
-  scorables: any[];
-  canKeep: boolean;
-  canFork: boolean;
-  concluded: boolean;
-  log: string[];
-  isRolling: boolean;
-  lastPick: string[];
+  data: {
+    canRoll: boolean | undefined;
+    players: playerData[];
+    rollingPlayerId: string;
+    currentRoll: number[];
+    dice: number;
+    currentScore: number;
+    scorables: any[];
+    canKeep: boolean;
+    canFork: boolean;
+    concluded: boolean;
+    log: string[];
+    isRolling: boolean;
+    lastPick: string[];
+  };
 }
 let games: gameData[] = [];
 function gameService() {
@@ -28,62 +30,64 @@ function gameService() {
       });
       games.push({
         ...r,
-        players: playerArray,
-        rollingPlayerId: r.host.id,
-        currentRoll: [],
-        dice: 6,
-        currentScore: 0,
-        scorables: [],
-        canKeep: false,
-        canFork: false,
-        concluded: false,
-        canRoll: true,
-        log: [],
-        isRolling: true,
-        lastPick: [""],
+        data: {
+          players: playerArray,
+          rollingPlayerId: r.host.id,
+          currentRoll: [],
+          dice: 6,
+          currentScore: 0,
+          scorables: [],
+          canKeep: false,
+          canFork: false,
+          concluded: false,
+          canRoll: true,
+          log: [],
+          isRolling: true,
+          lastPick: [""],
+        },
       });
     },
     sendMessage: (gameId: string, player: player, msg: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      game.chat.push(player.name + ": " + msg);
+      game.chat.unshift(player.name + ": " + msg);
     },
     nextTurn: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      let player = game.players.find(
-        (p: playerData) => p.id === game.rollingPlayerId
+      let player = game.data.players.find(
+        (p: playerData) => p.id === game.data.rollingPlayerId
       ) as playerData;
-      game.dice = 6;
-      game.lastPick.pop();
-      game.currentScore = 0;
-      if (game.players.indexOf(player) < game.players.length - 1) {
-        game.rollingPlayerId =
-          game.players[game.players.indexOf(player) + 1].id;
+      game.data.dice = 6;
+      game.data.lastPick.pop();
+      game.data.currentScore = 0;
+      if (game.data.players.indexOf(player) < game.data.players.length - 1) {
+        game.data.rollingPlayerId =
+          game.data.players[game.data.players.indexOf(player) + 1].id;
       } else {
-        game.rollingPlayerId = game.players[0].id;
+        game.data.rollingPlayerId = game.data.players[0].id;
       }
-      game.scorables = [];
-      game.canRoll = true;
+      game.data.scorables = [];
+      game.data.canRoll = true;
       return game;
     },
     newRoll: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
 
       if (game) {
-        game.lastPick.pop();
-        game.isRolling = true;
-        game.canRoll = false;
-        game.canFork = false;
-        game.currentRoll = diceRoll(game.dice);
-        game.scorables = computeResult(game.currentRoll);
-        if (game.scorables.length === 0) {
-          game.canKeep = false;
-          game.lastPick.pop();
-          game.lastPick.push("BUST!");
-          game.currentScore = 0;
+        game.data.lastPick.pop();
+        game.data.isRolling = true;
+        game.data.canRoll = false;
+        game.data.canFork = false;
+        game.data.currentRoll = diceRoll(game.data.dice);
+        game.data.scorables = computeResult(game.data.currentRoll);
+        if (game.data.scorables.length === 0) {
+          game.data.canKeep = false;
+          game.data.lastPick.pop();
+          game.data.lastPick.push("BUST!");
+          game.data.currentScore = 0;
 
-          game.log.unshift("bust!");
+          game.data.log.unshift("bust!");
         }
-        game.log.unshift(game.currentRoll.toString());
+        game.data.log.unshift(game.data.currentRoll.toString());
         return game;
       }
     },
@@ -91,121 +95,121 @@ function gameService() {
       let game = games.find((g) => g.id === gameId) as gameData;
 
       if (game) {
-        game.isRolling = false;
-        let player = game.players.find(
-          (p: playerData) => p.id === game.rollingPlayerId
+        game.data.isRolling = false;
+        let player = game.data.players.find(
+          (p: playerData) => p.id === game.data.rollingPlayerId
         ) as playerData;
-        let { newRoll, newScore } = addToScore(score, game.currentRoll);
-        game.lastPick.pop();
-        game.lastPick.push("+ " + score);
-        game.scorables = computeResult(newRoll);
-        game.log.unshift(player.name + ` picks: ` + score);
-        game.currentRoll = newRoll;
-        game.currentScore += newScore;
-        game.dice = game.currentRoll.length;
-        if (game.dice === 0) {
-          game.dice = 6;
-          game.lastPick.pop();
-          game.lastPick.push("HOT DICE");
+        let { newRoll, newScore } = addToScore(score, game.data.currentRoll);
+        game.data.lastPick.pop();
+        game.data.lastPick.push("+ " + score);
+        game.data.scorables = computeResult(newRoll);
+        game.data.log.unshift(player.name + ` picks: ` + score);
+        game.data.currentRoll = newRoll;
+        game.data.currentScore += newScore;
+        game.data.dice = game.data.currentRoll.length;
+        if (game.data.dice === 0) {
+          game.data.dice = 6;
+          game.data.lastPick.pop();
+          game.data.lastPick.push("HOT DICE");
         }
-        game.canRoll = true;
-        (player.points > 0 || game.currentScore >= 500) &&
-          (game.canKeep = true);
+        game.data.canRoll = true;
+        (player.points > 0 || game.data.currentScore >= 500) &&
+          (game.data.canKeep = true);
 
-        if (player && player.points + game.currentScore === 10000) {
-          game.scorables.length && (game.canKeep = false);
+        if (player && player.points + game.data.currentScore === 10000) {
+          game.data.scorables.length && (game.data.canKeep = false);
         }
         player &&
-          player.points + game.currentScore > 10000 &&
-          (game.canKeep = false);
+          player.points + game.data.currentScore > 10000 &&
+          (game.data.canKeep = false);
       }
       return game;
     },
     passFork: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      game.canFork = false;
-      game.dice = 6;
-      game.currentScore = 0;
+      game.data.canFork = false;
+      game.data.dice = 6;
+      game.data.currentScore = 0;
       return game;
     },
     keep: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      game.lastPick.pop();
-      game.lastPick.push("+ " + game.currentScore.toString());
-      let prevPlayerId = game.rollingPlayerId;
-      let player = game.players.find(
-        (p: playerData) => p.id === game.rollingPlayerId
+      game.data.lastPick.pop();
+      game.data.lastPick.push("+ " + game.data.currentScore.toString());
+      let prevPlayerId = game.data.rollingPlayerId;
+      let player = game.data.players.find(
+        (p: playerData) => p.id === game.data.rollingPlayerId
       ) as playerData;
-      if (player.points > 0 || game.currentScore >= 500) {
-        if (player.points + game.currentScore <= 10000) {
-          player.points += game.currentScore;
-          game.log.unshift(
-            player.name + " kept " + game.currentScore + " points"
+      if (player.points > 0 || game.data.currentScore >= 500) {
+        if (player.points + game.data.currentScore <= 10000) {
+          player.points += game.data.currentScore;
+          game.data.log.unshift(
+            player.name + " kept " + game.data.currentScore + " points"
           );
         }
       }
       if (player.points === 10000) {
-        game.concluded = true;
+        game.data.concluded = true;
         roomService.deleteRoom(game.id);
       }
-      if (game.players.indexOf(player) < game.players.length - 1) {
-        game.rollingPlayerId =
-          game.players[game.players.indexOf(player) + 1].id;
-        player = game.players[game.players.indexOf(player) + 1];
+      if (game.data.players.indexOf(player) < game.data.players.length - 1) {
+        game.data.rollingPlayerId =
+          game.data.players[game.data.players.indexOf(player) + 1].id;
+        player = game.data.players[game.data.players.indexOf(player) + 1];
       } else {
-        game.rollingPlayerId = game.players[0].id;
-        player = game.players[0];
+        game.data.rollingPlayerId = game.data.players[0].id;
+        player = game.data.players[0];
       }
       if (player.points > 0 && player.id !== prevPlayerId) {
-        game.canFork = true;
+        game.data.canFork = true;
       } else {
-        game.dice = 6;
-        game.currentScore = 0;
+        game.data.dice = 6;
+        game.data.currentScore = 0;
       }
-      game.currentRoll = [];
-      game.canKeep = false;
-      game.scorables = [];
+      game.data.currentRoll = [];
+      game.data.canKeep = false;
+      game.data.scorables = [];
 
       return game;
     },
     skipTurn: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      let player = game.players.find(
-        (p: playerData) => p.id === game.rollingPlayerId
+      let player = game.data.players.find(
+        (p: playerData) => p.id === game.data.rollingPlayerId
       ) as playerData;
-      if (game.players.indexOf(player) < game.players.length - 1) {
-        game.rollingPlayerId =
-          game.players[game.players.indexOf(player) + 1].id;
+      if (game.data.players.indexOf(player) < game.data.players.length - 1) {
+        game.data.rollingPlayerId =
+          game.data.players[game.data.players.indexOf(player) + 1].id;
       } else {
-        game.rollingPlayerId = game.players[0].id;
+        game.data.rollingPlayerId = game.data.players[0].id;
       }
-      game.canRoll = true;
-      game.canFork = false;
-      game.dice = 6;
-      game.scorables = [];
-      game.log.unshift(player.name + " was skipped");
+      game.data.canRoll = true;
+      game.data.canFork = false;
+      game.data.dice = 6;
+      game.data.scorables = [];
+      game.data.log.unshift(player.name + " was skipped");
       return game;
     },
     endGame: (gameId: string) => {},
     bust: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      game.lastPick.pop();
-      game.lastPick.push("BUST!");
-      let player = game.players.find(
-        (p: playerData) => p.id === game.rollingPlayerId
+      game.data.lastPick.pop();
+      game.data.lastPick.push("BUST!");
+      let player = game.data.players.find(
+        (p: playerData) => p.id === game.data.rollingPlayerId
       ) as playerData;
-      game.currentScore = 0;
-      game.dice = 6;
-      game.currentRoll = [];
-      if (game.players.indexOf(player) < game.players.length - 1) {
-        game.rollingPlayerId =
-          game.players[game.players.indexOf(player) + 1].id;
+      game.data.currentScore = 0;
+      game.data.dice = 6;
+      game.data.currentRoll = [];
+      if (game.data.players.indexOf(player) < game.data.players.length - 1) {
+        game.data.rollingPlayerId =
+          game.data.players[game.data.players.indexOf(player) + 1].id;
       } else {
-        game.rollingPlayerId = game.players[0].id;
+        game.data.rollingPlayerId = game.data.players[0].id;
       }
-      game.scorables = [];
-      game.canRoll = true;
-      game.log.unshift("bust!");
+      game.data.scorables = [];
+      game.data.canRoll = true;
+      game.data.log.unshift("bust!");
       return game;
     },
     removePlayer: (gameId: string, playerID: string) => {},

@@ -498,9 +498,12 @@ input[type="checkbox"]:focus-visible {
 
 .chat-box-body {
   min-height:50vh;
+  max-height:50vh;
   flex: 1;
   overflow-y: scroll;
   padding: 20px;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .chat-message {

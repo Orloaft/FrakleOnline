@@ -14,8 +14,9 @@ export const SocketGameController = (props: {
   roomid?: string;
 }) => {
   const [room, setRoom] = useState<any>(false);
-  const [game, setGame] = useState<gameData>();
+  const [game, setGame] = useState<any>();
   const [rooms, setRooms] = useState<room[]>([]);
+  const [chat, setChat] = useState<string[]>([]);
 
   useEffect(() => {
     socketInitializer();
@@ -33,15 +34,19 @@ export const SocketGameController = (props: {
             setRooms(rooms);
           });
           socket.on("game-update-response", (res) => {
-            setGame(res);
+            setGame(res.data);
           });
           socket.on(`update-room`, (room: room) => {
             setRoom(room);
           });
+          socket.on(`update-chat`, (chat: string[]) => {
+            setChat(chat);
+          });
           socket.on(`game-start`, (game: gameData) => {
             sessionStorage.setItem("gameSessionId", game.id);
             sessionStorage.setItem("userData", JSON.stringify(props.user));
-            setGame(game);
+            setGame(game.data);
+            setChat(game.chat);
           });
         });
       })
@@ -51,14 +56,10 @@ export const SocketGameController = (props: {
     socket && socket.emit("rejoin-session", gameSessionId);
   };
   const updateReq = (req: any) => {
-    socket.emit(
-      "game-update",
-      {
-        ...req,
-        game: game,
-      },
-      game && game.id
-    );
+    socket.emit("game-update", {
+      ...req,
+      id: room.id,
+    });
   };
   const leaveRoom = () => {
     socket.emit("leave-room", room.id, props.user);
@@ -68,9 +69,9 @@ export const SocketGameController = (props: {
   };
   const sendMessage = (msg: string) => {
     if (game) {
-      socket.emit("send_game_message", game.id, props.user, msg);
+      msg.length && socket.emit("send_game_message", room.id, props.user, msg);
     } else {
-      socket.emit("send_room_message", room.id, props.user, msg);
+      msg.length && socket.emit("send_room_message", room.id, props.user, msg);
     }
   };
   const joinRoom = (id: string) => {
@@ -97,7 +98,7 @@ export const SocketGameController = (props: {
             justifyContent: "center",
           }}
         >
-          <Chat messages={game.chat} sendMessage={sendMessage} />
+          <Chat messages={chat} sendMessage={sendMessage} />
         </div>
         <GameController game={game} user={props.user} updateReq={updateReq} />
       </>
