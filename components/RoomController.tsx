@@ -34,12 +34,7 @@ export const RoomController = (props: {
   const [isPrivate, setIsPrivate] = useState(false);
 
   const [message, setMessage] = useState<string>("");
-  useEffect(() => {
-    if (gameSessionId) {
-      rejoinSession(gameSessionId);
-    }
-  }, []);
-  const copyLink = () => {};
+
   return (
     (room && room.players.find((p: player) => p.id === user.id) && (
       <>
