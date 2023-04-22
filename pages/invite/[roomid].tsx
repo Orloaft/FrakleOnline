@@ -5,10 +5,12 @@ import styles from "@/styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 export default function RoomInvite() {
-  const [playerData, setPlayerData] = useState<player | null>(null);
+  const [playerData, setPlayerData] = useState<player | null>(
+    JSON.parse(localStorage.getItem("user") as string)
+  );
 
   useEffect(() => {
-    let user = localStorage.getItem("userData");
+    let user = localStorage.getItem("user");
     user && setPlayerData(JSON.parse(user));
   }, []);
   let router = useRouter();

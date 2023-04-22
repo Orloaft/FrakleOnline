@@ -7,7 +7,7 @@ import { io, Socket } from "socket.io-client";
 import { GameController } from "./GameController";
 import { RoomController } from "./RoomController";
 import { Chat } from "./Chat";
-
+//TODO game and room are redundant as state variables just make everything off of room and add a condition if it also has game data and then render gamecontroller
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 export const SocketGameController = (props: {
   user: player;
@@ -34,7 +34,13 @@ export const SocketGameController = (props: {
             setRooms(rooms);
           });
           socket.on("game-update-response", (res) => {
-            setGame(res.data);
+            console.log(res);
+            if (res) {
+              setRoom(res);
+              setGame(res.data);
+            } else {
+              sessionStorage.removeItem("gameSessionId");
+            }
           });
           socket.on(`update-room`, (room: room) => {
             setRoom(room);
@@ -44,7 +50,6 @@ export const SocketGameController = (props: {
           });
           socket.on(`game-start`, (game: gameData) => {
             sessionStorage.setItem("gameSessionId", game.id);
-            sessionStorage.setItem("userData", JSON.stringify(props.user));
             setGame(game.data);
             setChat(game.chat);
           });

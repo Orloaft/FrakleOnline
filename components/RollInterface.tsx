@@ -38,7 +38,7 @@ export const RollInterface = (props: {
   };
   useEffect(() => {
     props.game.isRolling && rollDice(props.game.currentRoll);
-  }, [props.game.currentRoll]);
+  }, [props.game.currentRoll, props.game.isRolling]);
   useEffect(() => {
     if (props.game.currentRoll.length > 0) pluckDice(props.game.currentRoll);
   }, [props.game.currentRoll]);

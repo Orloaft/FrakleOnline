@@ -47,7 +47,7 @@ const SocketHandler = (req: any, res: any) => {
         io.to(id).emit("update-room", roomService.getRoom(id));
       });
       socket.on("game-update", (req) => {
-        let res: gameData = { ...(gameService.getGame(req.id) as gameData) };
+        let res;
 
         switch (req.type) {
           case "skip":

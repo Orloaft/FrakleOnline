@@ -49,10 +49,12 @@ function gameService() {
     },
     sendMessage: (gameId: string, player: player, msg: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
+      console.log(gameId, games);
       game.chat.unshift(player.name + ": " + msg);
     },
     nextTurn: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
+      console.log(gameId, games);
       let player = game.data.players.find(
         (p: playerData) => p.id === game.data.rollingPlayerId
       ) as playerData;
@@ -71,7 +73,7 @@ function gameService() {
     },
     newRoll: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-
+      console.log(gameId, games);
       if (game) {
         game.data.lastPick.pop();
         game.data.isRolling = true;
