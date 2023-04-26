@@ -139,16 +139,20 @@ export const RollInterface = (props: {
                 </button>
               </>
             )}
-            {props.game.rollingPlayerId === props.player.id && (
-              <button
-                className="button"
-                onClick={() => {
-                  props.updateReq({ type: "skip" });
-                }}
-              >
-                End turn
-              </button>
-            )}
+            {props.game.rollingPlayerId === props.player.id &&
+              !props.game.canFork &&
+              !props.game.canRoll &&
+              !props.game.canKeep &&
+              !props.game.scorables.length && (
+                <button
+                  className="button"
+                  onClick={() => {
+                    props.updateReq({ type: "skip" });
+                  }}
+                >
+                  End turn
+                </button>
+              )}
 
             <div
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}

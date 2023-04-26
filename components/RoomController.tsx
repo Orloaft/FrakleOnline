@@ -49,7 +49,12 @@ export const RoomController = (props: {
               Start game
             </button>
             <CopyLinkAlert
-              link={process.env.NEXT_PUBLIC_SERVER_URL + "/invite/" + room.id}
+              link={
+                "https://" +
+                process.env.NEXT_PUBLIC_SERVER_URL +
+                "/invite/" +
+                room.id
+              }
             />
           </>
         )}
@@ -82,12 +87,23 @@ export const RoomController = (props: {
         </button>
         <span> {message}</span>
         {gameSessionId && (
-          <button
-            className="button"
-            onClick={() => rejoinSession(gameSessionId as string)}
-          >
-            rejoin
-          </button>
+          <>
+            <button
+              className="button"
+              onClick={() => rejoinSession(gameSessionId as string)}
+            >
+              rejoin
+            </button>
+            <button
+              className="button"
+              onClick={() => {
+                sessionStorage.removeItem("gameSessionId");
+                setMessage("match abandoned");
+              }}
+            >
+              leave room
+            </button>
+          </>
         )}
         <form
           style={{

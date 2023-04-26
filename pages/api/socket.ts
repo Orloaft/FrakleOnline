@@ -65,9 +65,6 @@ const SocketHandler = (req: any, res: any) => {
           case "pass-fork":
             res = gameService.passFork(req.id);
             break;
-          case "bust":
-            res = gameService.bust(req.id);
-            break;
         }
 
         io.to(req.id).emit("game-update-response", res);

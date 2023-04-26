@@ -193,27 +193,7 @@ function gameService() {
       return game;
     },
     endGame: (gameId: string) => {},
-    bust: (gameId: string) => {
-      let game = games.find((g) => g.id === gameId) as gameData;
-      game.data.lastPick.pop();
-      game.data.lastPick.push("BUST!");
-      let player = game.data.players.find(
-        (p: playerData) => p.id === game.data.rollingPlayerId
-      ) as playerData;
-      game.data.currentScore = 0;
-      game.data.dice = 6;
-      game.data.currentRoll = [];
-      if (game.data.players.indexOf(player) < game.data.players.length - 1) {
-        game.data.rollingPlayerId =
-          game.data.players[game.data.players.indexOf(player) + 1].id;
-      } else {
-        game.data.rollingPlayerId = game.data.players[0].id;
-      }
-      game.data.scorables = [];
-      game.data.canRoll = true;
-      game.data.log.unshift("bust!");
-      return game;
-    },
+
     removePlayer: (gameId: string, playerID: string) => {},
     getGame: (id: string) => {
       let game: gameData = games.find((g) => g.id === id) as gameData;
