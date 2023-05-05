@@ -1,20 +1,20 @@
-import { player, room } from "@/gameServices/roomService";
+import { GameType, player, room } from "@/services/roomService";
 import { useEffect, useState } from "react";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import axios from "axios";
-import { gameData } from "@/gameServices/gameService";
+import { gameData } from "@/services/gameService";
 import { io, Socket } from "socket.io-client";
 import { GameController } from "./GameController";
 import { RoomController } from "./RoomController";
 import { Chat } from "./Chat";
-//TODO game and room are redundant as state variables just make everything off of room and add a condition if it also has game data and then render gamecontroller
+
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 export const SocketGameController = (props: {
   user: player;
   roomid?: string;
 }) => {
   const [room, setRoom] = useState<any>(false);
-  const [game, setGame] = useState<any>();
+
   const [rooms, setRooms] = useState<room[]>([]);
   const [chat, setChat] = useState<string[]>([]);
 
@@ -37,7 +37,6 @@ export const SocketGameController = (props: {
             console.log(res);
             if (res) {
               setRoom(res);
-              setGame(res.data);
             } else {
               sessionStorage.removeItem("gameSessionId");
             }
@@ -48,10 +47,11 @@ export const SocketGameController = (props: {
           socket.on(`update-chat`, (chat: string[]) => {
             setChat(chat);
           });
-          socket.on(`game-start`, (game: gameData) => {
-            sessionStorage.setItem("gameSessionId", game.id);
-            setGame(game.data);
-            setChat(game.chat);
+          socket.on(`game-start`, (res: gameData) => {
+            sessionStorage.setItem("gameSessionId", res.id);
+            console.log(res);
+            setRoom(res);
+            setChat(res.chat);
           });
         });
       })
@@ -73,11 +73,14 @@ export const SocketGameController = (props: {
     socket.emit("start-game", room);
   };
   const sendMessage = (msg: string) => {
-    if (game) {
+    if (room.data) {
       msg.length && socket.emit("send_game_message", room.id, props.user, msg);
     } else {
       msg.length && socket.emit("send_room_message", room.id, props.user, msg);
     }
+  };
+  const toggleMode = (mode: GameType) => {
+    socket.emit("toggle_game_mode", room.id, mode);
   };
   const joinRoom = (id: string) => {
     socket && socket.emit("join-room", id, props.user);
@@ -91,7 +94,7 @@ export const SocketGameController = (props: {
   };
 
   return (
-    (game && (
+    (room.data && (
       <>
         <div
           style={{
@@ -105,7 +108,11 @@ export const SocketGameController = (props: {
         >
           <Chat messages={chat} sendMessage={sendMessage} />
         </div>
-        <GameController game={game} user={props.user} updateReq={updateReq} />
+        <GameController
+          game={room.data}
+          user={props.user}
+          updateReq={updateReq}
+        />
       </>
     )) ||
     (props.roomid && !room && (
@@ -129,6 +136,7 @@ export const SocketGameController = (props: {
         getRooms={getRooms}
         rejoinSession={rejoinSession}
         sendMessage={sendMessage}
+        onGameModeChange={toggleMode}
       />
     )
   );

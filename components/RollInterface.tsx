@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 import Dice from "./dice";
 
-import { gameData, playerData } from "@/gameServices/gameService";
-import { player } from "@/gameServices/roomService";
+import { gameData, playerData } from "@/services/gameService";
+import { player } from "@/services/roomService";
 import { uuid } from "uuidv4";
 import { GameLog } from "./GameLog";
 import ScoreAnimation from "./ScoreAnimation";
@@ -51,6 +51,10 @@ export const RollInterface = (props: {
       <div className="currentScore">
         <span>{currentPlayer && currentPlayer.name}</span>{" "}
         <span>Score: {props.game.currentScore}</span>
+        <span style={{ fontSize: "1rem" }}>
+          {" "}
+          {10000 - (props.game.currentScore + currentPlayer.points)} left
+        </span>
       </div>
       <Dice results={props.game.currentRoll} dice={props.game.dice} />
       <ScoreAnimation score={props.game.lastPick} />
@@ -117,17 +121,18 @@ export const RollInterface = (props: {
               </>
             )) || (
               <>
-                <button
-                  className="button"
-                  disabled={!props.game.canRoll}
-                  style={{ zIndex: "7", margin: "2rem" }}
-                  onClick={() => {
-                    props.updateReq({ type: "new-roll" });
-                  }}
-                >
-                  Roll {props.game.dice} dice
-                </button>
-
+                {props.game.currentScore + currentPlayer.points !== 10000 && (
+                  <button
+                    className="button"
+                    disabled={!props.game.canRoll}
+                    style={{ zIndex: "7", margin: "2rem" }}
+                    onClick={() => {
+                      props.updateReq({ type: "new-roll" });
+                    }}
+                  >
+                    Roll {props.game.dice} dice
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     props.updateReq({ type: "keep" });

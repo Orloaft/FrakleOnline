@@ -1,9 +1,12 @@
-import { room } from "@/gameServices/roomService";
+import { GameType, room } from "@/services/roomService";
 import { Chat } from "./Chat";
+import { GameModeInput } from "./inputs/GameMode";
 
 export const Room = (props: {
   room: room | boolean;
   sendMessage: (msg: string) => void;
+
+  onGameModeChange: (mode: GameType) => void;
 }) => {
   return (
     (typeof props.room === "object" && (
@@ -28,6 +31,10 @@ export const Room = (props: {
             );
           })}
         </ul>
+        <GameModeInput
+          mode={props.room.gameRules}
+          onGameModeChange={props.onGameModeChange}
+        />
       </div>
     )) || <></>
   );

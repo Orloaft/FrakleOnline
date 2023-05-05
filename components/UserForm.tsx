@@ -1,4 +1,4 @@
-import { player } from "@/gameServices/roomService";
+import { player } from "@/services/roomService";
 import styles from "@/styles/Home.module.css";
 import { validateName } from "@/utils/validateUtils";
 import { FormEvent, useState } from "react";

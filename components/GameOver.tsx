@@ -1,4 +1,4 @@
-import { playerData } from "@/gameServices/gameService";
+import { playerData } from "@/services/gameService";
 import Link from "next/link";
 import { useEffect } from "react";
 

@@ -1,5 +1,5 @@
-import gameService, { gameData, playerData } from "@/gameServices/gameService";
-import roomService, { player } from "@/gameServices/roomService";
+import gameService, { gameData, playerData } from "@/services/gameService";
+import roomService, { GameType, player } from "@/services/roomService";
 
 import { Server } from "socket.io";
 import { uuid } from "uuidv4";
@@ -25,6 +25,10 @@ const SocketHandler = (req: any, res: any) => {
           io.to(socket.id).emit("update-room", roomService.getRoom(roomId));
         }
       );
+      socket.on("toggle_game_mode", (id: string, mode: GameType) => {
+        roomService.setMode(id, mode);
+        io.to(id).emit("update-room", roomService.getRoom(id));
+      });
       socket.on(
         "send_room_message",
         (id: string, player: player | playerData, msg: string) => {

@@ -1,11 +1,14 @@
 import { addToScore, computeResult, diceRoll } from "@/utils/diceUtils";
 import roomService, { player, room } from "./roomService";
+import { Server } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 export interface playerData extends player {
   points: number;
   dice: number;
 }
 export interface gameData extends room {
   data: {
+    timer?: number;
     canRoll: boolean | undefined;
     players: playerData[];
     rollingPlayerId: string;
@@ -22,39 +25,72 @@ export interface gameData extends room {
   };
 }
 let games: gameData[] = [];
+
 function gameService() {
   return {
     createGame: (r: room) => {
       let playerArray: playerData[] = r.players.map((p) => {
         return { ...p, points: 0, dice: 0 };
       });
-      games.push({
-        ...r,
-        data: {
-          players: playerArray,
-          rollingPlayerId: r.host.id,
-          currentRoll: [],
-          dice: 6,
-          currentScore: 0,
-          scorables: [],
-          canKeep: false,
-          canFork: false,
-          concluded: false,
-          canRoll: true,
-          log: [],
-          isRolling: true,
-          lastPick: [""],
-        },
-      });
+      switch (r.gameRules) {
+        case 0:
+          games.push({
+            ...r,
+            data: {
+              players: playerArray,
+              rollingPlayerId: r.host.id,
+              currentRoll: [],
+              dice: 6,
+              currentScore: 0,
+              scorables: [],
+              canKeep: false,
+              canFork: false,
+              concluded: false,
+              canRoll: true,
+              log: [],
+              isRolling: true,
+              lastPick: [""],
+            },
+          });
+        case 1:
+          games.push({
+            ...r,
+            data: {
+              timer: 0,
+              players: playerArray,
+              rollingPlayerId: r.host.id,
+              currentRoll: [],
+              dice: 6,
+              currentScore: 0,
+              scorables: [],
+              canKeep: false,
+              canFork: false,
+              concluded: false,
+              canRoll: true,
+              log: [],
+              isRolling: true,
+              lastPick: [""],
+            },
+          });
+      }
     },
     sendMessage: (gameId: string, player: player, msg: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
       console.log(gameId, games);
       game.chat.unshift(player.name + ": " + msg);
     },
+    setTimer: (
+      io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+      id: string
+    ) => {
+      let game = games.find((g) => g.id === id) as gameData;
+      setInterval(() => {
+        game.data.timer && game.data.timer++;
+      }, 1000);
+    },
     nextTurn: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      console.log(gameId, games);
+
       let player = game.data.players.find(
         (p: playerData) => p.id === game.data.rollingPlayerId
       ) as playerData;

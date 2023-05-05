@@ -1,4 +1,4 @@
-import { player, room } from "@/gameServices/roomService";
+import { GameType, player, room } from "@/services/roomService";
 import { validateName } from "@/utils/validateUtils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ export const RoomController = (props: {
   getRooms: () => void;
   rejoinSession: (gameSessionId: string) => void;
   sendMessage: (msg: string) => void;
+  onGameModeChange: (mode: GameType) => void;
 }) => {
   let {
     room,
@@ -29,6 +30,7 @@ export const RoomController = (props: {
     getRooms,
     rejoinSession,
     sendMessage,
+    onGameModeChange,
   } = props;
   let gameSessionId = sessionStorage.getItem("gameSessionId");
   const [isPrivate, setIsPrivate] = useState(false);
@@ -38,7 +40,11 @@ export const RoomController = (props: {
   return (
     (room && room.players.find((p: player) => p.id === user.id) && (
       <>
-        <Room sendMessage={sendMessage} room={room} />
+        <Room
+          sendMessage={sendMessage}
+          room={room}
+          onGameModeChange={onGameModeChange}
+        />
         <button className="button" onClick={leaveRoom}>
           Leave
         </button>

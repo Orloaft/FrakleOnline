@@ -1,6 +1,6 @@
 import { SocketGameController } from "@/components/SocketGameController";
 import { UserForm } from "@/components/UserForm";
-import { player } from "@/gameServices/roomService";
+import { player } from "@/services/roomService";
 import styles from "@/styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";

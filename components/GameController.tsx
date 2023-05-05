@@ -1,5 +1,5 @@
-import { gameData, playerData } from "@/gameServices/gameService";
-import { player } from "@/gameServices/roomService";
+import { gameData, playerData } from "@/services/gameService";
+import { player } from "@/services/roomService";
 import { useState } from "react";
 import { GameLog } from "./GameLog";
 import { GameOver } from "./GameOver";

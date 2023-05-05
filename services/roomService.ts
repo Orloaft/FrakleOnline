@@ -1,5 +1,9 @@
-import { uuid } from "uuidv4";
+import { gameData } from "./gameService";
 
+export enum GameType {
+  default,
+  timeAttack,
+}
 export interface player {
   id: string;
   name: string;
@@ -12,6 +16,7 @@ export interface room {
   host: player;
   isPrivate: boolean;
   chat: string[];
+  gameRules: GameType;
 }
 
 let rooms: room[] = [];
@@ -31,6 +36,7 @@ function roomService() {
         host: host,
         isPrivate: isPrivate,
         chat: [],
+        gameRules: 0,
       });
     },
     showRooms: () => {
@@ -49,6 +55,10 @@ function roomService() {
     sendMessage: (id: string, player: player, msg: string) => {
       let room = rooms.find((r) => r.id === id);
       room?.chat.unshift(player.name + ": " + msg);
+    },
+    setMode: (id: string, mode: GameType) => {
+      let room = rooms.find((r) => r.id === id) as room;
+      room.gameRules = mode;
     },
     leaveRoom: (id: string, player: player) => {
       let oldRoom = rooms.find((room) => room.id === id);
