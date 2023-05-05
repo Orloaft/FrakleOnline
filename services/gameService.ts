@@ -7,8 +7,8 @@ export interface playerData extends player {
   dice: number;
 }
 export interface gameData extends room {
+  timer?: number;
   data: {
-    timer?: number;
     canRoll: boolean | undefined;
     players: playerData[];
     rollingPlayerId: string;
@@ -55,8 +55,8 @@ function gameService() {
         case 1:
           games.push({
             ...r,
+            timer: 1,
             data: {
-              timer: 0,
               players: playerArray,
               rollingPlayerId: r.host.id,
               currentRoll: [],
@@ -84,8 +84,11 @@ function gameService() {
       id: string
     ) => {
       let game = games.find((g) => g.id === id) as gameData;
+
       setInterval(() => {
-        game.data.timer && game.data.timer++;
+        game.gameRules === 1 && game.timer && (game.timer += 1);
+        console.log(game.timer);
+        io.to(id).emit("timer_update", game.timer);
       }, 1000);
     },
     nextTurn: (gameId: string) => {

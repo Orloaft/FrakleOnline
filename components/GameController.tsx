@@ -9,6 +9,7 @@ export const GameController = (props: {
   game: any;
   user: player;
   updateReq: (req: any) => void;
+  timer: number;
 }) => {
   const [showLog, setShowLog] = useState<boolean>(false);
   return (
@@ -35,6 +36,7 @@ export const GameController = (props: {
           game={props.game}
           player={props.user}
           updateReq={props.updateReq}
+          timer={props.timer}
         />
       )}
     </>

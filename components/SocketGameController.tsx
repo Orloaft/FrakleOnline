@@ -14,7 +14,7 @@ export const SocketGameController = (props: {
   roomid?: string;
 }) => {
   const [room, setRoom] = useState<any>(false);
-
+  const [timer, setTimer] = useState<any>(null);
   const [rooms, setRooms] = useState<room[]>([]);
   const [chat, setChat] = useState<string[]>([]);
 
@@ -46,6 +46,9 @@ export const SocketGameController = (props: {
           });
           socket.on(`update-chat`, (chat: string[]) => {
             setChat(chat);
+          });
+          socket.on("timer_update", (timer) => {
+            setTimer(timer);
           });
           socket.on(`game-start`, (res: gameData) => {
             sessionStorage.setItem("gameSessionId", res.id);
@@ -112,6 +115,7 @@ export const SocketGameController = (props: {
           game={room.data}
           user={props.user}
           updateReq={updateReq}
+          timer={timer}
         />
       </>
     )) ||

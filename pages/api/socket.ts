@@ -89,6 +89,8 @@ const SocketHandler = (req: any, res: any) => {
         console.log("starting game");
         io.to(room.id).emit("game-start", gameService.getGame(room.id));
         roomService.deleteRoom(room.id);
+        gameService.getGame(room.id).gameRules === 1 &&
+          gameService.setTimer(io, room.id);
         io.emit("update-rooms", roomService.showRooms());
       });
       socket.on("find_room", (roomid: string) => {

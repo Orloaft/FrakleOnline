@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-
 import Dice from "./dice";
-
-import { gameData, playerData } from "@/services/gameService";
+import { playerData } from "@/services/gameService";
 import { player } from "@/services/roomService";
 import { uuid } from "uuidv4";
 import { GameLog } from "./GameLog";
@@ -31,6 +29,7 @@ export const RollInterface = (props: {
   game: any;
   player: player;
   updateReq: (req: any) => void;
+  timer: number;
 }) => {
   const [showLog, setShowLog] = useState<boolean>(false);
   const handleScoreSelect = (score: string) => {
@@ -55,6 +54,7 @@ export const RollInterface = (props: {
           {" "}
           {10000 - (props.game.currentScore + currentPlayer.points)} left
         </span>
+        {props.timer && <span>{props.timer}</span>}
       </div>
       <Dice results={props.game.currentRoll} dice={props.game.dice} />
       <ScoreAnimation score={props.game.lastPick} />
