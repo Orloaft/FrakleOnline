@@ -22,6 +22,7 @@ export interface gameData extends room {
     log: string[];
     isRolling: boolean;
     lastPick: string[];
+    alert: string;
   };
 }
 let games: gameData[] = [];
@@ -48,8 +49,9 @@ function gameService() {
               concluded: false,
               canRoll: true,
               log: [],
-              isRolling: true,
+              isRolling: false,
               lastPick: [""],
+              alert: "",
             },
           });
         case 1:
@@ -68,8 +70,9 @@ function gameService() {
               concluded: false,
               canRoll: false,
               log: [],
-              isRolling: true,
+              isRolling: false,
               lastPick: [""],
+              alert: "",
             },
           });
       }
@@ -84,18 +87,60 @@ function gameService() {
       id: string
     ) => {
       let game = games.find((g) => g.id === id) as gameData;
-
+      game.data.alert = "Ready?";
+      io.to(id).emit("game-update-response", game);
       setTimeout(() => {
         game.data.canRoll = true;
+        game.data.alert = "";
+
         setInterval(() => {
           game.gameRules === 1 && game.timer && (game.timer += 1);
           if (game.timer === 11) {
             let player = game.data.players.find(
               (p: playerData) => p.id === game.data.rollingPlayerId
             ) as playerData;
-            game.data.dice = 6;
-            game.data.lastPick.pop();
-            game.data.currentScore = 0;
+            let prevPlayerId = game.data.rollingPlayerId;
+            if (game.data.scorables.length) {
+              game.data.isRolling = false;
+
+              let { newRoll, newScore } = addToScore(
+                game.data.scorables[0],
+                game.data.currentRoll
+              );
+              game.data.lastPick.pop();
+              game.data.lastPick.push("+ " + game.data.scorables[0]);
+
+              game.data.log.unshift(
+                player.name + ` picks: ` + game.data.scorables[0]
+              );
+              game.data.currentRoll = newRoll;
+              game.data.currentScore += newScore;
+              game.data.dice = game.data.currentRoll.length;
+              game.data.canRoll = true;
+              (player.points > 0 || game.data.currentScore >= 500) &&
+                (game.data.canKeep = true);
+            }
+            if (player && player.points + game.data.currentScore === 10000) {
+              game.data.scorables.length && (game.data.canKeep = false);
+            }
+            player &&
+              player.points + game.data.currentScore > 10000 &&
+              (game.data.canKeep = false);
+
+            if (player.points > 0 || game.data.currentScore >= 500) {
+              if (player.points + game.data.currentScore <= 10000) {
+                player.points += game.data.currentScore;
+                game.data.currentScore &&
+                  game.data.log.unshift(
+                    player.name + " kept " + game.data.currentScore + " points"
+                  );
+              }
+            }
+            if (player.points === 10000) {
+              game.data.concluded = true;
+              roomService.deleteRoom(game.id);
+            }
+
             if (
               game.data.players.indexOf(player) <
               game.data.players.length - 1
@@ -105,10 +150,20 @@ function gameService() {
             } else {
               game.data.rollingPlayerId = game.data.players[0].id;
             }
-
+            player = game.data.players.find(
+              (p: playerData) => p.id === game.data.rollingPlayerId
+            ) as playerData;
+            if (player.points > 0 && player.id !== prevPlayerId) {
+              game.data.canFork = true;
+            } else {
+              game.data.dice = 6;
+              game.data.lastPick.pop();
+              game.data.currentScore = 0;
+            }
             game.data.scorables = [];
             game.data.canRoll = true;
             game.timer = 1;
+            game.data.isRolling = false;
             io.to(id).emit("game-update-response", game);
           }
           io.to(id).emit("timer_update", game.timer);
@@ -138,7 +193,7 @@ function gameService() {
     },
     newRoll: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-      console.log(gameId, games);
+
       if (game) {
         game.data.lastPick.pop();
         game.data.isRolling = true;
@@ -166,6 +221,7 @@ function gameService() {
         let player = game.data.players.find(
           (p: playerData) => p.id === game.data.rollingPlayerId
         ) as playerData;
+
         let { newRoll, newScore } = addToScore(score, game.data.currentRoll);
         game.data.lastPick.pop();
         game.data.lastPick.push("+ " + score);

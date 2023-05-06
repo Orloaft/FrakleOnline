@@ -5,6 +5,7 @@ import { player } from "@/services/roomService";
 import { uuid } from "uuidv4";
 import { GameLog } from "./GameLog";
 import ScoreAnimation from "./ScoreAnimation";
+import PopUpText from "./PopUpText";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -97,89 +98,94 @@ export const RollInterface = (props: {
       </div>
 
       <div style={{ position: "absolute", top: "50%" }}>
-        {props.game.rollingPlayerId === props.player.id && (
-          <>
-            {(props.game.canFork && (
-              <>
-                <span>Fork?</span>
-                <button
-                  onClick={() => {
-                    props.updateReq({ type: "new-roll" });
-                  }}
-                  className="button"
-                >
-                  yes
-                </button>
-                <button
-                  onClick={() => {
-                    props.updateReq({ type: "pass-fork" });
-                  }}
-                  className="button"
-                >
-                  no
-                </button>
-              </>
-            )) || (
-              <>
-                {props.game.currentScore + currentPlayer.points !== 10000 && (
+        {(!props.game.alert &&
+          props.game.rollingPlayerId === props.player.id && (
+            <>
+              {(props.game.canFork && (
+                <>
+                  <span>Fork?</span>
                   <button
-                    className="button"
-                    disabled={!props.game.canRoll}
-                    style={{ zIndex: "7", margin: "2rem" }}
                     onClick={() => {
                       props.updateReq({ type: "new-roll" });
                     }}
+                    className="button"
                   >
-                    Roll {props.game.dice} dice
+                    yes
                   </button>
-                )}
-                <button
-                  onClick={() => {
-                    props.updateReq({ type: "keep" });
-                  }}
-                  className="button"
-                  disabled={!props.game.canKeep}
-                >
-                  Keep
-                </button>
-              </>
-            )}
-            {props.game.rollingPlayerId === props.player.id &&
-              !props.game.canFork &&
-              !props.game.canRoll &&
-              !props.game.canKeep &&
-              !props.game.scorables.length && (
-                <button
-                  className="button"
-                  onClick={() => {
-                    props.updateReq({ type: "skip" });
-                  }}
-                >
-                  End turn
-                </button>
-              )}
-
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-            >
-              {props.game.scorables.map((el: string) => {
-                if (typeof el === "string") {
-                  return (
+                  <button
+                    onClick={() => {
+                      props.updateReq({ type: "pass-fork" });
+                    }}
+                    className="button"
+                  >
+                    no
+                  </button>
+                </>
+              )) || (
+                <>
+                  {props.game.currentScore + currentPlayer.points !== 10000 && (
                     <button
-                      key={uuid()}
                       className="button"
+                      disabled={!props.game.canRoll}
+                      style={{ zIndex: "7", margin: "2rem" }}
                       onClick={() => {
-                        handleScoreSelect(el);
+                        props.updateReq({ type: "new-roll" });
                       }}
                     >
-                      {el}
+                      Roll {props.game.dice} dice
                     </button>
-                  );
-                }
-              })}
-            </div>
-          </>
-        )}
+                  )}
+                  <button
+                    onClick={() => {
+                      props.updateReq({ type: "keep" });
+                    }}
+                    className="button"
+                    disabled={!props.game.canKeep}
+                  >
+                    Keep
+                  </button>
+                </>
+              )}
+              {props.game.rollingPlayerId === props.player.id &&
+                !props.game.canFork &&
+                !props.game.canRoll &&
+                !props.game.canKeep &&
+                !props.game.scorables.length && (
+                  <button
+                    className="button"
+                    onClick={() => {
+                      props.updateReq({ type: "skip" });
+                    }}
+                  >
+                    End turn
+                  </button>
+                )}
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "1rem",
+                }}
+              >
+                {props.game.scorables.map((el: string) => {
+                  if (typeof el === "string") {
+                    return (
+                      <button
+                        key={uuid()}
+                        className="button"
+                        onClick={() => {
+                          handleScoreSelect(el);
+                        }}
+                      >
+                        {el}
+                      </button>
+                    );
+                  }
+                })}
+              </div>
+            </>
+          )) || <PopUpText text={props.game.alert} />}
       </div>
     </>
   );
