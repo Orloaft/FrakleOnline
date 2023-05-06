@@ -66,7 +66,7 @@ function gameService() {
               canKeep: false,
               canFork: false,
               concluded: false,
-              canRoll: true,
+              canRoll: false,
               log: [],
               isRolling: true,
               lastPick: [""],
@@ -85,11 +85,36 @@ function gameService() {
     ) => {
       let game = games.find((g) => g.id === id) as gameData;
 
-      setInterval(() => {
-        game.gameRules === 1 && game.timer && (game.timer += 1);
-        console.log(game.timer);
-        io.to(id).emit("timer_update", game.timer);
-      }, 1000);
+      setTimeout(() => {
+        game.data.canRoll = true;
+        setInterval(() => {
+          game.gameRules === 1 && game.timer && (game.timer += 1);
+          if (game.timer === 11) {
+            let player = game.data.players.find(
+              (p: playerData) => p.id === game.data.rollingPlayerId
+            ) as playerData;
+            game.data.dice = 6;
+            game.data.lastPick.pop();
+            game.data.currentScore = 0;
+            if (
+              game.data.players.indexOf(player) <
+              game.data.players.length - 1
+            ) {
+              game.data.rollingPlayerId =
+                game.data.players[game.data.players.indexOf(player) + 1].id;
+            } else {
+              game.data.rollingPlayerId = game.data.players[0].id;
+            }
+
+            game.data.scorables = [];
+            game.data.canRoll = true;
+            game.timer = 1;
+            io.to(id).emit("game-update-response", game);
+          }
+          io.to(id).emit("timer_update", game.timer);
+        }, 1000);
+        io.to(id).emit("game-update-response", game);
+      }, 2000);
     },
     nextTurn: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
@@ -108,6 +133,7 @@ function gameService() {
       }
       game.data.scorables = [];
       game.data.canRoll = true;
+      game.timer = 1;
       return game;
     },
     newRoll: (gameId: string) => {
@@ -207,6 +233,7 @@ function gameService() {
         game.data.dice = 6;
         game.data.currentScore = 0;
       }
+      game.timer = 1;
       game.data.currentRoll = [];
       game.data.canKeep = false;
       game.data.scorables = [];

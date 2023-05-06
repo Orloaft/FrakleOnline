@@ -54,7 +54,7 @@ export const RollInterface = (props: {
           {" "}
           {10000 - (props.game.currentScore + currentPlayer.points)} left
         </span>
-        {props.timer && <span>{props.timer}</span>}
+        {props.timer && <span>{11 - props.timer}</span>}
       </div>
       <Dice results={props.game.currentRoll} dice={props.game.dice} />
       <ScoreAnimation score={props.game.lastPick} />
