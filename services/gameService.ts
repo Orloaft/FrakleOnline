@@ -165,7 +165,8 @@ function gameService() {
               (p: playerData) => p.id === game.data.rollingPlayerId
             ) as playerData;
             if (player.points > 0 && player.id !== prevPlayerId) {
-              player.points + game.data.currentScore < 10000 &&
+              game.data.currentScore &&
+                player.points + game.data.currentScore < 10000 &&
                 (game.data.canFork = true);
             } else {
               game.data.dice = 6;
@@ -310,7 +311,8 @@ function gameService() {
         player = game.data.players[0];
       }
       if (player.points > 0 && player.id !== prevPlayerId) {
-        game.data.currentScore + player.points < 10000 &&
+        game.data.currentScore &&
+          player.points + game.data.currentScore < 10000 &&
           (game.data.canFork = true);
       } else {
         game.data.dice = 6;
