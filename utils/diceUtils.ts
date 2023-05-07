@@ -1,3 +1,4 @@
+import { playerData } from "@/services/gameService";
 import scoreUtils from "./scoreUtils";
 export const diceRoll = (n: number) => {
   let result: number[] = [];
@@ -350,4 +351,12 @@ export const addToScore = (score: string, result: number[]) => {
   }
 
   return { newRoll: result, newScore: 0 };
+};
+export const checkIfOver = (scores: any, player: playerData) => {
+  for (let i = 0; i < scores.length; i++) {
+    if (addToScore(scores[i], []).newScore + player.points > 10000) {
+      return true;
+    }
+  }
+  return false;
 };

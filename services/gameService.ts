@@ -1,4 +1,9 @@
-import { addToScore, computeResult, diceRoll } from "@/utils/diceUtils";
+import {
+  addToScore,
+  checkIfOver,
+  computeResult,
+  diceRoll,
+} from "@/utils/diceUtils";
 import roomService, { player, room } from "./roomService";
 import { Server } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
@@ -193,7 +198,9 @@ function gameService() {
     },
     newRoll: (gameId: string) => {
       let game = games.find((g) => g.id === gameId) as gameData;
-
+      let player = game.data.players.find(
+        (p: playerData) => p.id === game.data.rollingPlayerId
+      ) as playerData;
       if (game) {
         game.data.lastPick.pop();
         game.data.isRolling = true;
@@ -201,7 +208,11 @@ function gameService() {
         game.data.canFork = false;
         game.data.currentRoll = diceRoll(game.data.dice);
         game.data.scorables = computeResult(game.data.currentRoll);
-        if (game.data.scorables.length === 0) {
+
+        if (
+          game.data.scorables.length === 0 ||
+          checkIfOver(game.data.scorables, player)
+        ) {
           game.data.canKeep = false;
           game.data.lastPick.pop();
           game.data.lastPick.push("BUST!");
