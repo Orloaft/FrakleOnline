@@ -97,7 +97,7 @@ export const SocketGameController = (props: {
   };
 
   return (
-    (room.data && (
+    (room && room.data && (
       <>
         <div
           style={{
