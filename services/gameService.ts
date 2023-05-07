@@ -213,11 +213,11 @@ function gameService() {
           game.data.scorables.length === 0 ||
           checkIfOver(game.data.scorables, player)
         ) {
+          game.data.scorables = [];
           game.data.canKeep = false;
           game.data.lastPick.pop();
           game.data.lastPick.push("BUST!");
           game.data.currentScore = 0;
-
           game.data.log.unshift("bust!");
         }
         game.data.log.unshift(game.data.currentRoll.toString());
@@ -253,9 +253,17 @@ function gameService() {
         if (player && player.points + game.data.currentScore === 10000) {
           game.data.scorables.length && (game.data.canKeep = false);
         }
-        player &&
-          player.points + game.data.currentScore > 10000 &&
-          (game.data.canKeep = false);
+        if (player && player.points + game.data.currentScore > 10000) {
+          game.data.scorables = [];
+          game.data.canKeep = false;
+          game.data.canRoll = false;
+          game.data.canFork = false;
+          game.data.lastPick.pop();
+          game.data.lastPick.push("BUST!");
+          game.data.dice = 0;
+          game.data.currentScore = 0;
+          game.data.log.unshift("bust!");
+        }
       }
       return game;
     },
@@ -295,7 +303,8 @@ function gameService() {
         player = game.data.players[0];
       }
       if (player.points > 0 && player.id !== prevPlayerId) {
-        game.data.canFork = true;
+        game.data.currentScore + player.points < 10000 &&
+          (game.data.canFork = true);
       } else {
         game.data.dice = 6;
         game.data.currentScore = 0;
