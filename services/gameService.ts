@@ -128,11 +128,17 @@ function gameService() {
             if (player && player.points + game.data.currentScore === 10000) {
               game.data.scorables.length && (game.data.canKeep = false);
             }
-            player &&
-              player.points + game.data.currentScore > 10000 &&
-              (game.data.canKeep = false);
-
-            if (player.points > 0 || game.data.currentScore >= 500) {
+            if (player && player.points + game.data.currentScore > 10000) {
+              game.data.scorables = [];
+              game.data.canKeep = false;
+              game.data.canRoll = false;
+              game.data.canFork = false;
+              game.data.lastPick.pop();
+              game.data.lastPick.push("BUST!");
+              game.data.dice = 0;
+              game.data.currentScore = 0;
+              game.data.log.unshift("bust!");
+            } else if (player.points > 0 || game.data.currentScore >= 500) {
               if (player.points + game.data.currentScore <= 10000) {
                 player.points += game.data.currentScore;
                 game.data.currentScore &&
@@ -159,7 +165,8 @@ function gameService() {
               (p: playerData) => p.id === game.data.rollingPlayerId
             ) as playerData;
             if (player.points > 0 && player.id !== prevPlayerId) {
-              game.data.canFork = true;
+              player.points + game.data.currentScore < 10000 &&
+                (game.data.canFork = true);
             } else {
               game.data.dice = 6;
               game.data.lastPick.pop();
