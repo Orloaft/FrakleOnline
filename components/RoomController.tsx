@@ -1,10 +1,11 @@
 import { GameType, player, room } from "@/services/roomService";
 import { validateName } from "@/utils/validateUtils";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CheckBox from "./CheckBox";
 import CopyLinkAlert from "./CopyLinkAlert";
 import { Room } from "./Room";
+import UpdateContext from "./context/updateContext";
 
 export const RoomController = (props: {
   room: room;
@@ -16,7 +17,6 @@ export const RoomController = (props: {
   createRoom: (e: any, isPrivate: boolean) => void;
   getRooms: () => void;
   rejoinSession: (gameSessionId: string) => void;
-  sendMessage: (msg: string) => void;
   onGameModeChange: (mode: GameType) => void;
 }) => {
   let {
@@ -29,29 +29,29 @@ export const RoomController = (props: {
     createRoom,
     getRooms,
     rejoinSession,
-    sendMessage,
     onGameModeChange,
   } = props;
   let gameSessionId = sessionStorage.getItem("gameSessionId");
   const [isPrivate, setIsPrivate] = useState(false);
-
+  const updateRequest = useContext(UpdateContext);
   const [message, setMessage] = useState<string>("");
 
   return (
     (room && room.players.find((p: player) => p.id === user.id) && (
       <>
-        <Room
-          sendMessage={sendMessage}
-          room={room}
-          onGameModeChange={onGameModeChange}
-        />
+        <Room room={room} onGameModeChange={onGameModeChange} />
         <button className="button" onClick={leaveRoom}>
           Leave
         </button>
         {room.host.id === props.user.id && (
           <>
             {" "}
-            <button className="button" onClick={startGame}>
+            <button
+              className="button"
+              onClick={() => {
+                updateRequest && updateRequest({ type: 4, roomId: room.id });
+              }}
+            >
               Start game
             </button>
             <CopyLinkAlert

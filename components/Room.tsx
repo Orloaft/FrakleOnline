@@ -4,7 +4,6 @@ import { GameModeInput } from "./inputs/GameMode";
 
 export const Room = (props: {
   room: room | boolean;
-  sendMessage: (msg: string) => void;
 
   onGameModeChange: (mode: GameType) => void;
 }) => {
@@ -20,7 +19,7 @@ export const Room = (props: {
           alignItems: "center",
         }}
       >
-        <Chat messages={props.room.chat} sendMessage={props.sendMessage} />
+        <Chat messages={props.room.chat} />
         <ul>
           <span>Players:</span>
           {props.room.players.map((p) => {

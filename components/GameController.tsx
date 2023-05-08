@@ -1,4 +1,4 @@
-import { gameData, playerData } from "@/services/gameService";
+import { playerData } from "@/services/gameService";
 import { player } from "@/services/roomService";
 import { useState } from "react";
 import { GameLog } from "./GameLog";
@@ -8,7 +8,6 @@ import { RollInterface } from "./RollInterface";
 export const GameController = (props: {
   game: any;
   user: player;
-  updateReq: (req: any) => void;
   timer: number;
 }) => {
   const [showLog, setShowLog] = useState<boolean>(false);
@@ -35,7 +34,6 @@ export const GameController = (props: {
         <RollInterface
           game={props.game}
           player={props.user}
-          updateReq={props.updateReq}
           timer={props.timer}
         />
       )}

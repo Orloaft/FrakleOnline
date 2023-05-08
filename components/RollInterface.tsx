@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Dice from "./dice";
 import { playerData } from "@/services/gameService";
 import { player } from "@/services/roomService";
@@ -6,6 +6,7 @@ import { uuid } from "uuidv4";
 import { GameLog } from "./GameLog";
 import ScoreAnimation from "./ScoreAnimation";
 import PopUpText from "./PopUpText";
+import UpdateContext from "./context/updateContext";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -29,12 +30,12 @@ function toggleClasses(die: HTMLElement) {
 export const RollInterface = (props: {
   game: any;
   player: player;
-  updateReq: (req: any) => void;
   timer: number;
 }) => {
+  const updateRequest = useContext(UpdateContext);
   const [showLog, setShowLog] = useState<boolean>(false);
   const handleScoreSelect = (score: string) => {
-    props.updateReq({ type: "score-select", score: score });
+    updateRequest && updateRequest({ type: 2, score: score });
   };
   useEffect(() => {
     props.game.isRolling && rollDice(props.game.currentRoll);
@@ -106,7 +107,7 @@ export const RollInterface = (props: {
                   <span>Fork?</span>
                   <button
                     onClick={() => {
-                      props.updateReq({ type: "new-roll" });
+                      updateRequest && updateRequest({ type: 1 });
                     }}
                     className="button"
                   >
@@ -114,7 +115,7 @@ export const RollInterface = (props: {
                   </button>
                   <button
                     onClick={() => {
-                      props.updateReq({ type: "pass-fork" });
+                      updateRequest && updateRequest({ type: 6 });
                     }}
                     className="button"
                   >
@@ -129,7 +130,7 @@ export const RollInterface = (props: {
                       disabled={!props.game.canRoll}
                       style={{ zIndex: "7", margin: "2rem" }}
                       onClick={() => {
-                        props.updateReq({ type: "new-roll" });
+                        updateRequest && updateRequest({ type: 1 });
                       }}
                     >
                       Roll {props.game.dice} dice
@@ -137,7 +138,7 @@ export const RollInterface = (props: {
                   )}
                   <button
                     onClick={() => {
-                      props.updateReq({ type: "keep" });
+                      updateRequest && updateRequest({ type: 3 });
                     }}
                     className="button"
                     disabled={!props.game.canKeep}
@@ -154,7 +155,7 @@ export const RollInterface = (props: {
                   <button
                     className="button"
                     onClick={() => {
-                      props.updateReq({ type: "skip" });
+                      updateRequest && updateRequest({ type: 5 });
                     }}
                   >
                     End turn

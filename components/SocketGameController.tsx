@@ -7,6 +7,7 @@ import { io, Socket } from "socket.io-client";
 import { GameController } from "./GameController";
 import { RoomController } from "./RoomController";
 import { Chat } from "./Chat";
+import UpdateContext from "./context/updateContext";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 export const SocketGameController = (props: {
@@ -66,7 +67,8 @@ export const SocketGameController = (props: {
   const updateReq = (req: any) => {
     socket.emit("game-update", {
       ...req,
-      id: room.id,
+      roomId: room.id,
+      player: props.user,
     });
   };
   const leaveRoom = () => {
@@ -75,13 +77,7 @@ export const SocketGameController = (props: {
   const startGame = () => {
     socket.emit("start-game", room);
   };
-  const sendMessage = (msg: string) => {
-    if (room.data) {
-      msg.length && socket.emit("send_game_message", room.id, props.user, msg);
-    } else {
-      msg.length && socket.emit("send_room_message", room.id, props.user, msg);
-    }
-  };
+
   const toggleMode = (mode: GameType) => {
     socket.emit("toggle_game_mode", room.id, mode);
   };
@@ -97,51 +93,47 @@ export const SocketGameController = (props: {
   };
 
   return (
-    (room && room.data && (
-      <>
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            width: `100%`,
-            zIndex: 4,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Chat messages={chat} sendMessage={sendMessage} />
-        </div>
-        <GameController
-          game={room.data}
-          user={props.user}
-          updateReq={updateReq}
-          timer={timer}
-        />
-      </>
-    )) ||
-    (props.roomid && !room && (
-      <button
-        className="button"
-        onClick={() => {
-          joinRoom(props.roomid as string);
-        }}
-      >
-        join room
-      </button>
-    )) || (
-      <RoomController
-        room={room}
-        rooms={rooms}
-        user={props.user}
-        leaveRoom={leaveRoom}
-        startGame={startGame}
-        joinRoom={joinRoom}
-        createRoom={createRoom}
-        getRooms={getRooms}
-        rejoinSession={rejoinSession}
-        sendMessage={sendMessage}
-        onGameModeChange={toggleMode}
-      />
-    )
+    <UpdateContext.Provider value={updateReq}>
+      {(room && room.data && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              width: `100%`,
+              zIndex: 4,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Chat messages={chat} />
+          </div>
+          <GameController game={room.data} user={props.user} timer={timer} />
+        </>
+      )) ||
+        (props.roomid && !room && (
+          <button
+            className="button"
+            onClick={() => {
+              joinRoom(props.roomid as string);
+            }}
+          >
+            join room
+          </button>
+        )) || (
+          <RoomController
+            room={room}
+            rooms={rooms}
+            user={props.user}
+            leaveRoom={leaveRoom}
+            startGame={startGame}
+            joinRoom={joinRoom}
+            createRoom={createRoom}
+            getRooms={getRooms}
+            rejoinSession={rejoinSession}
+            onGameModeChange={toggleMode}
+          />
+        )}{" "}
+    </UpdateContext.Provider>
   );
 };

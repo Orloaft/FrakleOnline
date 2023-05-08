@@ -1,13 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { uuid } from "uuidv4";
+import UpdateContext from "./context/updateContext";
 
-export const Chat = ({
-  messages,
-  sendMessage,
-}: {
-  messages: string[];
-  sendMessage: (msg: string) => void;
-}) => {
+export const Chat = ({ messages }: { messages: string[] }) => {
+  const updateRequest = useContext(UpdateContext);
   const [inputValue, setInputValue] = useState<string>("");
   const [displayed, setDisplayed] = useState<boolean>(false);
   const handleInputChange = (event: any) => {
@@ -16,7 +12,8 @@ export const Chat = ({
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    sendMessage(event.target.message.value);
+    updateRequest &&
+      updateRequest({ type: "chat", msg: event.target.message.value });
     setInputValue("");
   };
   return (
