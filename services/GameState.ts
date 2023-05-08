@@ -6,6 +6,8 @@ import {
 } from "@/utils/diceUtils";
 import { gameData, playerData } from "./gameService";
 import roomService, { room } from "./roomService";
+import { Server } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 export enum actionType {
   SEND_CHAT,
   NEW_ROLL,
@@ -16,6 +18,7 @@ export enum actionType {
   PASS_FORK,
 }
 export interface actionRequest {
+  io?: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
   type: actionType;
   roomId: string;
   msg: string;
@@ -29,7 +32,7 @@ export interface player {
 }
 
 let games: gameData[] = [];
-
+let chats: string[][] = [];
 // this is going to be the new class handling any game actions
 export class GameStateReducer {
   static getGame(gameId: string) {
@@ -47,7 +50,7 @@ export class GameStateReducer {
         return this.keep(req.roomId);
       case 4:
         let room = roomService.getRoom(req.roomId) as room;
-        return this.createGame(room);
+        return req.io && this.createGame(room, req.io);
       case 5:
         return this.nextTurn(req.roomId);
       case 6:
@@ -60,11 +63,15 @@ export class GameStateReducer {
     game.chat.unshift(player.name + ": " + msg);
     return game;
   }
-  static createGame(r: room): gameData {
+  static createGame(
+    r: room,
+    io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+  ): gameData {
     let newGame: any;
     let playerArray: playerData[] = r.players.map((p) => {
       return { ...p, points: 0, dice: 0 };
     });
+
     switch (r.gameRules) {
       case 0:
         newGame = {
@@ -86,7 +93,8 @@ export class GameStateReducer {
             alert: "",
           },
         };
-
+        games.push(newGame);
+        break;
       case 1:
         newGame = {
           ...r,
@@ -108,9 +116,23 @@ export class GameStateReducer {
             alert: "",
           },
         };
+        games.push(newGame);
+        this.setTimer(io, r.id);
     }
-    games.push(newGame);
+
     return newGame;
+  }
+  static bust(gameId: string): gameData {
+    let game = games.find((g) => g.id === gameId) as gameData;
+    game.data.scorables = [];
+    game.data.canKeep = false;
+    game.data.lastPick.pop();
+    game.data.lastPick.push("BUST!");
+    game.data.currentScore = 0;
+    game.data.log.unshift("bust!");
+
+    game = this.nextTurn(gameId);
+    return game;
   }
   static newRoll(gameId: string): gameData {
     let game = games.find((g) => g.id === gameId) as gameData;
@@ -129,12 +151,7 @@ export class GameStateReducer {
       game.data.scorables.length === 0 ||
       checkIfOver(game.data.scorables, player)
     ) {
-      game.data.scorables = [];
-      game.data.canKeep = false;
-      game.data.lastPick.pop();
-      game.data.lastPick.push("BUST!");
-      game.data.currentScore = 0;
-      game.data.log.unshift("bust!");
+      game = this.bust(gameId);
     }
     game.data.log.unshift(game.data.currentRoll.toString());
     return game;
@@ -188,15 +205,7 @@ export class GameStateReducer {
       game.data.scorables.length && (game.data.canKeep = false);
     }
     if (player && player.points + game.data.currentScore > 10000) {
-      game.data.scorables = [];
-      game.data.canKeep = false;
-      game.data.canRoll = false;
-      game.data.canFork = false;
-      game.data.lastPick.pop();
-      game.data.lastPick.push("BUST!");
-      game.data.dice = 0;
-      game.data.currentScore = 0;
-      game.data.log.unshift("bust!");
+      this.nextTurn(gameId);
     }
 
     return game;
@@ -250,5 +259,27 @@ export class GameStateReducer {
     game.data.scorables = [];
 
     return game;
+  }
+  static setTimer(
+    io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+    id: string
+  ) {
+    let game = games.find((g) => g.id === id) as gameData;
+    game.data.alert = "Ready?";
+    io.to(id).emit("game-update-response", game);
+    setTimeout(() => {
+      game.data.canRoll = true;
+      game.data.alert = "";
+
+      setInterval(() => {
+        game.gameRules === 1 && game.timer && (game.timer += 1);
+        if (game.timer === 11) {
+          game = this.nextTurn(id);
+          io.to(id).emit("game-update-response", game);
+        }
+        io.to(id).emit("timer_update", game.timer);
+      }, 1000);
+      io.to(id).emit("game-update-response", game);
+    }, 2000);
   }
 }

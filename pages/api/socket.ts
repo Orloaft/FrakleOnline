@@ -37,6 +37,7 @@ const SocketHandler = (req: any, res: any) => {
         io.to(id).emit("update-room", roomService.getRoom(id));
       });
       socket.on("game-update", (req: actionRequest) => {
+        req.io = io;
         io.to(req.roomId).emit(
           "game-update-response",
           GameStateReducer.handleAction(req)
