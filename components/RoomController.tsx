@@ -12,7 +12,6 @@ export const RoomController = (props: {
   rooms: room[];
   user: player;
   leaveRoom: () => void;
-  startGame: () => void;
   joinRoom: (id: string) => void;
   createRoom: (e: any, isPrivate: boolean) => void;
   getRooms: () => void;
@@ -24,7 +23,6 @@ export const RoomController = (props: {
     rooms,
     user,
     leaveRoom,
-    startGame,
     joinRoom,
     createRoom,
     getRooms,

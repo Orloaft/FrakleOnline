@@ -37,6 +37,7 @@ export const SocketGameController = (props: {
           socket.on("game-update-response", (res) => {
             console.log(res);
             if (res) {
+              sessionStorage.setItem("gameSessionId", res.id);
               setRoom(res);
             } else {
               sessionStorage.removeItem("gameSessionId");
@@ -50,12 +51,6 @@ export const SocketGameController = (props: {
           });
           socket.on("timer_update", (timer) => {
             setTimer(timer);
-          });
-          socket.on(`game-start`, (res: gameData) => {
-            sessionStorage.setItem("gameSessionId", res.id);
-            console.log(res);
-            setRoom(res);
-            setChat(res.chat);
           });
         });
       })
@@ -73,9 +68,6 @@ export const SocketGameController = (props: {
   };
   const leaveRoom = () => {
     socket.emit("leave-room", room.id, props.user);
-  };
-  const startGame = () => {
-    socket.emit("start-game", room);
   };
 
   const toggleMode = (mode: GameType) => {
@@ -126,7 +118,6 @@ export const SocketGameController = (props: {
             rooms={rooms}
             user={props.user}
             leaveRoom={leaveRoom}
-            startGame={startGame}
             joinRoom={joinRoom}
             createRoom={createRoom}
             getRooms={getRooms}

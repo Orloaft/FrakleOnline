@@ -38,6 +38,7 @@ export const RollInterface = (props: {
     updateRequest && updateRequest({ type: 2, score: score });
   };
   useEffect(() => {
+    console.log(props.game.isRolling);
     props.game.isRolling && rollDice(props.game.currentRoll);
   }, [props.game.currentRoll, props.game.isRolling]);
   useEffect(() => {

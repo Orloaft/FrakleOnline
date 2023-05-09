@@ -38,10 +38,10 @@ export class GameStateReducer {
   static getGame(gameId: string) {
     return games.find((game) => game.id === gameId);
   }
-  static handleAction(req: actionRequest): gameData | void {
+  static handleAction(req: actionRequest): gameData | void | room {
     switch (req.type) {
       case 0:
-        return this.sendMessage(req.roomId, req.player, req.msg);
+        return this.sendMessage(req.roomId, req.player, req.msg, req.io);
       case 1:
         return this.newRoll(req.roomId);
       case 2:
@@ -50,6 +50,7 @@ export class GameStateReducer {
         return this.keep(req.roomId);
       case 4:
         let room = roomService.getRoom(req.roomId) as room;
+        roomService.deleteRoom(room.id);
         return req.io && this.createGame(room, req.io);
       case 5:
         return this.nextTurn(req.roomId);
@@ -58,10 +59,24 @@ export class GameStateReducer {
     }
   }
 
-  static sendMessage(gameId: string, player: player, msg: string): gameData {
+  static sendMessage(
+    gameId: string,
+    player: player,
+    msg: string,
+    io: any
+  ): gameData | room {
     let game = games.find((g) => g.id === gameId) as gameData;
-    game.chat.unshift(player.name + ": " + msg);
-    return game;
+    if (game) {
+      game.chat.unshift(player.name + ": " + msg);
+      game.data.lastPick.pop();
+      game.data.lastPick.push(player.name + ": " + msg);
+      game.data.isRolling = false;
+      io.to(gameId).emit("update-chat", game.chat);
+      return game;
+    } else {
+      roomService.sendMessage(gameId, player, msg);
+      return roomService.getRoom(gameId) as room;
+    }
   }
   static createGame(
     r: room,
@@ -124,6 +139,7 @@ export class GameStateReducer {
   }
   static bust(gameId: string): gameData {
     let game = games.find((g) => g.id === gameId) as gameData;
+    game.data.canRoll = false;
     game.data.scorables = [];
     game.data.canKeep = false;
     game.data.lastPick.pop();
@@ -131,7 +147,6 @@ export class GameStateReducer {
     game.data.currentScore = 0;
     game.data.log.unshift("bust!");
 
-    game = this.nextTurn(gameId);
     return game;
   }
   static newRoll(gameId: string): gameData {
@@ -205,7 +220,7 @@ export class GameStateReducer {
       game.data.scorables.length && (game.data.canKeep = false);
     }
     if (player && player.points + game.data.currentScore > 10000) {
-      this.nextTurn(gameId);
+      this.bust(gameId);
     }
 
     return game;
@@ -236,7 +251,7 @@ export class GameStateReducer {
     if (player.points === 10000) {
       game.data.concluded = true;
       roomService.deleteRoom(game.id);
-    }
+    } // If I am at the end of the turn order start from index 0
     if (game.data.players.indexOf(player) < game.data.players.length - 1) {
       game.data.rollingPlayerId =
         game.data.players[game.data.players.indexOf(player) + 1].id;
@@ -245,10 +260,12 @@ export class GameStateReducer {
       game.data.rollingPlayerId = game.data.players[0].id;
       player = game.data.players[0];
     }
-    if (player.points > 0 && player.id !== prevPlayerId) {
-      game.data.currentScore &&
-        player.points + game.data.currentScore < 10000 &&
-        (game.data.canFork = true);
+    if (
+      player.points > 0 &&
+      player.id !== prevPlayerId &&
+      player.points + game.data.currentScore < 10000
+    ) {
+      game.data.canFork = true;
     } else {
       game.data.dice = 6;
       game.data.currentScore = 0;
@@ -274,7 +291,16 @@ export class GameStateReducer {
       setInterval(() => {
         game.gameRules === 1 && game.timer && (game.timer += 1);
         if (game.timer === 11) {
-          game = this.nextTurn(id);
+          if (game.data.scorables.length) {
+            game = this.scoreSelect(id, game.data.scorables[0]);
+          }
+          if (game.data.currentScore && game.data.canKeep) {
+            game = this.keep(id);
+          } else {
+            game.data.canFork && (game.data.canFork = false);
+            game = this.nextTurn(id);
+          }
+
           io.to(id).emit("game-update-response", game);
         }
         io.to(id).emit("timer_update", game.timer);

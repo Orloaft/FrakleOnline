@@ -13,7 +13,7 @@ export const Chat = ({ messages }: { messages: string[] }) => {
   const handleSubmit = (event: any) => {
     event.preventDefault();
     updateRequest &&
-      updateRequest({ type: "chat", msg: event.target.message.value });
+      updateRequest({ type: 0, msg: event.target.message.value });
     setInputValue("");
   };
   return (
