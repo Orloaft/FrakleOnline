@@ -58,7 +58,9 @@ export class GameStateReducer {
         return this.passFork(req.roomId);
     }
   }
-
+  static deleteGame(gameId: string) {
+    games = games.filter((game) => game.id !== gameId);
+  }
   static sendMessage(
     gameId: string,
     player: player,
@@ -250,7 +252,7 @@ export class GameStateReducer {
     }
     if (player.points === 10000) {
       game.data.concluded = true;
-      roomService.deleteRoom(game.id);
+      this.deleteGame(gameId);
     } // If I am at the end of the turn order start from index 0
     if (game.data.players.indexOf(player) < game.data.players.length - 1) {
       game.data.rollingPlayerId =
