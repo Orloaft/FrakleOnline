@@ -4,48 +4,12 @@ export const FadingBackground = () => {
   return (
     <div className="bg_fade_wrapper">
       <div className="bg_fade">
-        <Image
-          className="bg1"
-          src="/backgroundSD-1.jpg"
-          fill
-          style={{ objectFit: "cover" }}
-          alt="bg"
-        />
-        <Image
-          className="bg2"
-          src="/backgroundSD-2.jpg"
-          fill
-          style={{ objectFit: "cover" }}
-          alt="bg"
-        />
-        <Image
-          className="bg3"
-          src="/backgroundSD-3.jpg"
-          fill
-          style={{ objectFit: "cover" }}
-          alt="bg"
-        />
-        <Image
-          className="bg4"
-          src="/backgroundSD-4.jpg"
-          fill
-          style={{ objectFit: "cover" }}
-          alt="bg"
-        />
-        <Image
-          className="bg5"
-          src="/backgroundSD-5.jpg"
-          fill
-          style={{ objectFit: "cover" }}
-          alt="bg"
-        />
-        <Image
-          className="bg6"
-          src="/backgroundSD-6.jpg"
-          fill
-          style={{ objectFit: "cover" }}
-          alt="bg"
-        />
+        <div className="bg bg1"></div>
+        <div className="bg bg2"></div>
+        <div className="bg bg3"></div>
+        <div className="bg bg4"></div>
+        <div className="bg bg5"></div>
+        <div className="bg bg6"></div>
       </div>
     </div>
   );

@@ -600,6 +600,13 @@ input[type="checkbox"]:focus-visible {
   font-size: 0;
 }
 
+.bg {
+  width: 100%;
+	height: 100%; 
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
 
 .bg_fade .bg1{
   opacity:0;
@@ -607,10 +614,12 @@ input[type="checkbox"]:focus-visible {
   animation-name: fade-zoom;
 	animation-duration: 180s;
 	animation-iteration-count: infinite;
+  background-image: url("/backgroundSD-1.jpg");
 	animation-delay: 0s;
 }
 
 .bg_fade .bg2{
+  background-image: url("/backgroundSD-2.jpg");
   opacity:0;
   position: absolute;
   animation-name: fade-zoom;
@@ -620,6 +629,7 @@ input[type="checkbox"]:focus-visible {
 }
 
 .bg_fade .bg3{
+  background-image: url("/backgroundSD-3.jpg");
   opacity:0;
   position: absolute;
   animation-name: fade-zoom;
@@ -629,6 +639,7 @@ input[type="checkbox"]:focus-visible {
 
 }
 .bg_fade .bg4{
+  background-image: url("/backgroundSD-4.jpg");
   opacity:0;
   position: absolute;
   animation-name: fade-zoom;
@@ -638,6 +649,7 @@ input[type="checkbox"]:focus-visible {
 }
 
 .bg_fade .bg5{
+  background-image: url("/backgroundSD-5.jpg");
   opacity:0;
   position: absolute;
   animation-name: fade-zoom;
@@ -647,6 +659,7 @@ input[type="checkbox"]:focus-visible {
 }
 
 .bg_fade .bg6{
+  background-image: url("/backgroundSD-6.jpg");
   opacity:0;
   position: absolute;
   animation-name: fade-zoom;
