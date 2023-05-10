@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { SocketGameController } from "@/components/SocketGameController";
 import { UserForm } from "@/components/UserForm";
 import { player } from "@/services/GameState";
+import Head from "next/head";
 export default function Home() {
   const [title, setTitle] = useState<boolean>(true);
   const [playerData, setPlayerData] = useState<player | null>(null);
@@ -16,6 +17,10 @@ export default function Home() {
   }, []);
   return (
     <div className={styles.home}>
+      <Head>
+        {" "}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <FadingBackground />
       {(title && (
         <div>
