@@ -5,22 +5,27 @@ import { GameLog } from "./GameLog";
 import { GameOver } from "./GameOver";
 import { RollInterface } from "./RollInterface";
 
-export const GameController = (props: {
+export const GameController = ({
+  game,
+  user,
+  timer,
+  setRoom,
+}: {
   game: any;
   user: player;
   timer: number;
+  setRoom: any;
 }) => {
   const [showLog, setShowLog] = useState<boolean>(false);
   return (
     <>
-      {(props.game.concluded && (
+      {(game.concluded && (
         <>
           <GameOver
-            winner={props.game.players.find(
-              (p: playerData) => p.points === 10000
-            )}
+            setRoom={setRoom}
+            winner={game.players.find((p: playerData) => p.points === 10000)}
           />
-          {showLog && <GameLog log={props.game.log} />}
+          {showLog && <GameLog log={game.log} />}
           <button
             className="button"
             onClick={() => {
@@ -30,13 +35,7 @@ export const GameController = (props: {
             Log
           </button>
         </>
-      )) || (
-        <RollInterface
-          game={props.game}
-          player={props.user}
-          timer={props.timer}
-        />
-      )}
+      )) || <RollInterface game={game} player={user} timer={timer} />}
     </>
   );
 };

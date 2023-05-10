@@ -1,17 +1,27 @@
 import { playerData } from "@/services/gameService";
-import Link from "next/link";
 import { useEffect } from "react";
 
-export const GameOver = (props: { winner: playerData | undefined }) => {
+export const GameOver = ({
+  winner,
+  setRoom,
+}: {
+  winner: playerData | undefined;
+  setRoom: any;
+}) => {
   useEffect(() => {
     sessionStorage.removeItem("gameSessionId");
   }, []);
   return (
     <>
-      <span>WINNER: {props.winner && props.winner.name}</span>
-      <Link href="/" className="button">
+      <span>WINNER: {winner && winner.name}</span>
+      <div
+        onClick={() => {
+          setRoom(null);
+        }}
+        className="button"
+      >
         Back
-      </Link>
+      </div>
     </>
   );
 };

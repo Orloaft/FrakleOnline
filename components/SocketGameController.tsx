@@ -100,7 +100,12 @@ export const SocketGameController = (props: {
           >
             <Chat messages={chat} />
           </div>
-          <GameController game={room.data} user={props.user} timer={timer} />
+          <GameController
+            game={room.data}
+            user={props.user}
+            timer={timer}
+            setRoom={setRoom}
+          />
         </>
       )) ||
         (props.roomid && !room && (
