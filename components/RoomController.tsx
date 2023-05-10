@@ -1,11 +1,11 @@
 import { GameType, player, room } from "@/services/roomService";
 import { validateName } from "@/utils/validateUtils";
-import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
+
 import CheckBox from "./CheckBox";
-import CopyLinkAlert from "./CopyLinkAlert";
-import { Room } from "./Room";
-import UpdateContext from "./context/updateContext";
+
+import { RoomView } from "./RoomView";
+import { useState } from "react";
+import RulesPage from "@/pages/rules";
 
 export const RoomController = (props: {
   room: room;
@@ -31,39 +31,19 @@ export const RoomController = (props: {
   } = props;
   let gameSessionId = sessionStorage.getItem("gameSessionId");
   const [isPrivate, setIsPrivate] = useState(false);
-  const updateRequest = useContext(UpdateContext);
-  const [message, setMessage] = useState<string>("");
 
+  const [message, setMessage] = useState<string>("");
+  const [tutorial, setTutorial] = useState<boolean>(false);
   return (
     (room && room.players.find((p: player) => p.id === user.id) && (
-      <>
-        <Room room={room} onGameModeChange={onGameModeChange} />
-        <button className="button" onClick={leaveRoom}>
-          Leave
-        </button>
-        {room.host.id === props.user.id && (
-          <>
-            {" "}
-            <button
-              className="button"
-              onClick={() => {
-                updateRequest && updateRequest({ type: 4, roomId: room.id });
-              }}
-            >
-              Start game
-            </button>
-            <CopyLinkAlert
-              link={
-                "https://" +
-                process.env.NEXT_PUBLIC_SERVER_URL +
-                "/invite/" +
-                room.id
-              }
-            />
-          </>
-        )}
-      </>
-    )) || (
+      <RoomView
+        room={room}
+        onGameModeChange={onGameModeChange}
+        leaveRoom={leaveRoom}
+        user={props.user}
+      />
+    )) ||
+    (tutorial && <RulesPage setTutorial={setTutorial} />) || (
       <section
         style={{
           display: "flex",
@@ -134,18 +114,19 @@ export const RoomController = (props: {
 
           <button className="button">make room</button>
           <CheckBox isPrivate={isPrivate} setIsPrivate={setIsPrivate} />
-          <Link
+          <div
             style={{
-              textDecoration: "none",
               position: "absolute",
               top: 5,
               right: 5,
             }}
-            href="/rules"
             className="button"
+            onClick={() => {
+              setTutorial(true);
+            }}
           >
             <span>How to play</span>
-          </Link>
+          </div>
         </form>
       </section>
     )

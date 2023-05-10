@@ -1,13 +1,16 @@
-import styles from "@/styles/Home.module.css";
-import Link from "next/link";
 import { useState } from "react";
-export default function RulesPage() {
+export default function RulesPage({ setTutorial }: { setTutorial: any }) {
   const [side, setSide] = useState<string>("front");
   return (
-    <div className={styles.home}>
-      <Link href="/play" className="button" style={{ textDecoration: "none" }}>
+    <>
+      <div
+        className="button"
+        onClick={() => {
+          setTutorial(false);
+        }}
+      >
         Back
-      </Link>
+      </div>
       {(side === "front" && (
         <div
           style={{
@@ -55,6 +58,10 @@ export default function RulesPage() {
             were not set aside for scoring from the previous player’s turn). If
             the player scores with any of the dice on the first roll, they
             receive the previously accumulated points.
+          </span>
+          <span>
+            Each player must accumulate at least 500 points in a single turn in
+            order to be able to start retaining points.
           </span>
         </div>
       )) || (
@@ -424,6 +431,6 @@ export default function RulesPage() {
           <span>Two triplets = 2500</span>
         </div>
       )}
-    </div>
+    </>
   );
 }
