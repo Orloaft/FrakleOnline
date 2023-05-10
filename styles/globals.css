@@ -4,7 +4,11 @@ body {
   overflow-y: hidden;
   background-color: #0d0e16;
 }
-
+@media only screen and (max-width: 600px) {
+  body {
+    margin-top:-2rem;
+  }
+}
 * {
   -webkit-user-select: none; /* Safari */        
   -moz-user-select: none; /* Firefox */
