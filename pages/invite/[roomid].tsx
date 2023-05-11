@@ -1,3 +1,4 @@
+import { FadingBackground } from "@/components/FadingBackground";
 import { SocketGameController } from "@/components/SocketGameController";
 import { UserForm } from "@/components/UserForm";
 import { player } from "@/services/roomService";
@@ -14,6 +15,7 @@ export default function RoomInvite() {
   let router = useRouter();
   return (
     <div className={styles.home}>
+      <FadingBackground />
       {(playerData && (
         <SocketGameController
           user={playerData}
