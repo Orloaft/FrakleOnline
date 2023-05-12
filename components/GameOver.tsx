@@ -1,5 +1,6 @@
 import { playerData } from "@/services/gameService";
 import { useEffect } from "react";
+import ConfettiExplosion from "react-confetti-explosion";
 
 export const GameOver = ({
   winner,
@@ -13,6 +14,7 @@ export const GameOver = ({
   }, []);
   return (
     <>
+      <ConfettiExplosion />
       <span>WINNER: {winner && winner.name}</span>
       <div
         onClick={() => {
