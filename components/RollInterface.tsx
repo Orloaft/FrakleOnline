@@ -7,6 +7,7 @@ import { GameLog } from "./GameLog";
 import ScoreAnimation from "./ScoreAnimation";
 import PopUpText from "./PopUpText";
 import UpdateContext from "./context/updateContext";
+import { Howl } from "howler";
 
 function rollDice(rolls: number[]) {
   const dice = [...document.querySelectorAll(".die-list")] as HTMLElement[];
@@ -27,7 +28,11 @@ function toggleClasses(die: HTMLElement) {
   die.classList.toggle("odd-roll");
   die.classList.toggle("even-roll");
 }
-export const RollInterface = (props: {
+export const RollInterface = ({
+  game,
+  player,
+  timer,
+}: {
   game: any;
   player: player;
   timer: number;
@@ -37,30 +42,41 @@ export const RollInterface = (props: {
   const handleScoreSelect = (score: string) => {
     updateRequest && updateRequest({ type: 2, score: score });
   };
-  useEffect(() => {
-    console.log(props.game.isRolling);
-    props.game.isRolling && rollDice(props.game.currentRoll);
-  }, [props.game.currentRoll, props.game.isRolling]);
-  useEffect(() => {
-    if (props.game.currentRoll.length > 0) pluckDice(props.game.currentRoll);
-  }, [props.game.currentRoll]);
-  let currentPlayer = props.game.players.find(
-    (p: playerData) => p.id === props.game.rollingPlayerId
-  );
+  const loadSoundEffect = () => {
+    return new Howl({
+      src: ["/notification_simple-02.ogg"], // Update the path and filename according to your project structure
+      preload: true,
+    });
+  };
 
+  useEffect(() => {
+    game.isRolling && rollDice(game.currentRoll);
+  }, [game.currentRoll, game.isRolling]);
+  useEffect(() => {
+    if (game.currentRoll.length > 0) pluckDice(game.currentRoll);
+  }, [game.currentRoll]);
+  let currentPlayer = game.players.find(
+    (p: playerData) => p.id === game.rollingPlayerId
+  );
+  useEffect(() => {
+    const soundEffect = loadSoundEffect();
+    if (game.rollingPlayerId === player.id) {
+      soundEffect.play();
+    }
+  }, [game.rollingPlayerId, player.id]);
   return (
     <>
       <div className="currentScore">
         <span>{currentPlayer && currentPlayer.name}</span>{" "}
-        <span>Score: {props.game.currentScore}</span>
+        <span>Score: {game.currentScore}</span>
         <span style={{ fontSize: "1rem" }}>
           {" "}
-          {10000 - (props.game.currentScore + currentPlayer.points)} left
+          {10000 - (game.currentScore + currentPlayer.points)} left
         </span>
-        {props.timer && <span>{11 - props.timer}</span>}
+        {timer && <span>{11 - timer}</span>}
       </div>
-      <Dice results={props.game.currentRoll} dice={props.game.dice} />
-      <ScoreAnimation score={props.game.lastPick} />
+      <Dice results={game.currentRoll} dice={game.dice} />
+      <ScoreAnimation score={game.lastPick} />
       <div
         style={{
           position: "absolute",
@@ -72,7 +88,7 @@ export const RollInterface = (props: {
         }}
       >
         <div style={{ overflow: "scroll" }}>
-          {props.game.players.map((p: playerData) => {
+          {game.players.map((p: playerData) => {
             return (
               <div
                 key={p.id}
@@ -87,7 +103,7 @@ export const RollInterface = (props: {
               </div>
             );
           })}
-          {showLog && <GameLog log={props.game.log} />}
+          {showLog && <GameLog log={game.log} />}
         </div>
         <button
           className="button"
@@ -100,94 +116,93 @@ export const RollInterface = (props: {
       </div>
 
       <div style={{ position: "absolute", top: "50%" }}>
-        {(!props.game.alert &&
-          props.game.rollingPlayerId === props.player.id && (
-            <>
-              {(props.game.canFork && (
-                <>
-                  <span>Fork?</span>
+        {(!game.alert && game.rollingPlayerId === player.id && (
+          <>
+            {(game.canFork && (
+              <>
+                <span>Fork?</span>
+                <button
+                  onClick={() => {
+                    updateRequest && updateRequest({ type: 1 });
+                  }}
+                  className="button"
+                >
+                  yes
+                </button>
+                <button
+                  onClick={() => {
+                    updateRequest && updateRequest({ type: 6 });
+                  }}
+                  className="button"
+                >
+                  no
+                </button>
+              </>
+            )) || (
+              <>
+                {game.currentScore + currentPlayer.points !== 10000 && (
                   <button
+                    className="button"
+                    disabled={!game.canRoll}
+                    style={{ zIndex: "7", margin: "2rem" }}
                     onClick={() => {
                       updateRequest && updateRequest({ type: 1 });
                     }}
-                    className="button"
                   >
-                    yes
-                  </button>
-                  <button
-                    onClick={() => {
-                      updateRequest && updateRequest({ type: 6 });
-                    }}
-                    className="button"
-                  >
-                    no
-                  </button>
-                </>
-              )) || (
-                <>
-                  {props.game.currentScore + currentPlayer.points !== 10000 && (
-                    <button
-                      className="button"
-                      disabled={!props.game.canRoll}
-                      style={{ zIndex: "7", margin: "2rem" }}
-                      onClick={() => {
-                        updateRequest && updateRequest({ type: 1 });
-                      }}
-                    >
-                      Roll {props.game.dice} dice
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      updateRequest && updateRequest({ type: 3 });
-                    }}
-                    className="button"
-                    disabled={!props.game.canKeep}
-                  >
-                    Keep
-                  </button>
-                </>
-              )}
-              {props.game.rollingPlayerId === props.player.id &&
-                !props.game.canFork &&
-                !props.game.canRoll &&
-                !props.game.canKeep &&
-                !props.game.scorables.length && (
-                  <button
-                    className="button"
-                    onClick={() => {
-                      updateRequest && updateRequest({ type: 5 });
-                    }}
-                  >
-                    End turn
+                    Roll {game.dice} dice
                   </button>
                 )}
+                <button
+                  onClick={() => {
+                    updateRequest && updateRequest({ type: 3 });
+                  }}
+                  className="button"
+                  disabled={!game.canKeep}
+                >
+                  Keep
+                </button>
+              </>
+            )}
+            {game.rollingPlayerId === player.id &&
+              !game.canFork &&
+              !game.canRoll &&
+              !game.canKeep &&
+              !game.scorables.length && (
+                <button
+                  className="button"
+                  onClick={() => {
+                    updateRequest && updateRequest({ type: 5 });
+                  }}
+                >
+                  End turn
+                </button>
+              )}
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                }}
-              >
-                {props.game.scorables.map((el: string) => {
-                  if (typeof el === "string") {
-                    return (
-                      <button
-                        key={uuid()}
-                        className="button"
-                        onClick={() => {
-                          handleScoreSelect(el);
-                        }}
-                      >
-                        {el}
-                      </button>
-                    );
-                  }
-                })}
-              </div>
-            </>
-          )) || <PopUpText text={props.game.alert} />}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+              }}
+            >
+              {game.scorables.map((el: string) => {
+                if (typeof el === "string") {
+                  return (
+                    <button
+                      key={uuid()}
+                      className="button"
+                      onClick={() => {
+                        handleScoreSelect(el);
+                      }}
+                    >
+                      {el}
+                    </button>
+                  );
+                }
+              })}
+            </div>
+          </>
+        )) || <PopUpText text={game.alert} />}
       </div>
     </>
   );
